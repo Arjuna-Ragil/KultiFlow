@@ -1,0 +1,1 @@
+# intinya semua terkait dto ama schemas masuk ke folder ini

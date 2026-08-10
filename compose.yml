@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:18.4-alpine3.24
+    container_name: CF26_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - CF26_net
+  
+  qc-service:
+    build: ./ai-services/qc
+    container_name: CF26_qc
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+
+volumes:
+  pg_data:
+
+networks:
+  CF26_net:
+    driver: bridge

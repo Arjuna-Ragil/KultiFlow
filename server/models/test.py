@@ -1,0 +1,1 @@
+# Folder ini berisi ORM untuk database, pakai SQLAlchemy

@@ -1,0 +1,230 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { ScanLine, Grid, Truck, TrendingUp, Leaf } from "lucide-react";
+import Particles from "@/components/Particles";
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-[#F9FAFB] text-[#1F2937] flex flex-col font-sans">
+      {/* HEADER NAVBAR */}
+      <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          {/* Logo "Stakeholder" */}
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-9 h-9 rounded-xl bg-[#71C168] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+              <Leaf className="w-5 h-5 fill-white/20" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-2xl tracking-tight text-[#1F2937]">
+                Stakeholder
+              </span>
+            </div>
+          </Link>
+
+          {/* Nav Right Buttons */}
+          <div className="flex items-center gap-4">
+            {/* Login as Admin (Routes to /admin/qc) */}
+            <Link
+              href="/admin/qc"
+              className="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-semibold text-[#1F2937] hover:bg-gray-50 transition-colors shadow-xs"
+            >
+              Login as Admin
+            </Link>
+
+            {/* Login as Customer (Disabled solid green button) */}
+            <button
+              disabled
+              aria-disabled="true"
+              className="px-5 py-2.5 rounded-lg bg-[#71C168] text-white text-sm font-semibold cursor-not-allowed opacity-85 shadow-xs flex items-center gap-1.5"
+              title="Customer Login temporarily disabled"
+            >
+              Login as Customer
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden bg-white border-b border-gray-100 py-16 md:py-24">
+        {/* React Bits Particles in background of Main 1 area */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-50">
+          <Particles
+            particleCount={180}
+            particleSpread={12}
+            speed={0.15}
+            particleColors={["#71C168", "#4ade80", "#a3e635"]}
+            moveParticlesOnHover
+            particleHoverFactor={1}
+            alphaParticles={true}
+            particleBaseSize={80}
+            sizeRandomness={0.8}
+            cameraDistance={20}
+            disableRotation={false}
+          />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-6 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#71C168]/10 text-[#71C168] text-xs font-bold uppercase tracking-wider">
+                <span className="w-2 h-2 rounded-full bg-[#71C168] animate-pulse"></span>
+                Next-Gen Fruit Management
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#1F2937] leading-tight tracking-tight">
+                Freshness Meets{" "}
+                <span className="text-[#71C168]">Intelligence</span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl">
+                The ultimate portal ecosystem. Seamlessly connecting high-efficiency
+                operational fruit management with an elegant, fresh retail experience.
+              </p>
+
+              <div className="pt-2">
+                <button
+                  onClick={() => alert("Catalog exploring is available in Admin QC mode.")}
+                  className="px-8 py-3.5 rounded-lg bg-[#71C168] hover:bg-[#62b059] text-white font-bold text-base shadow-md transition-all transform hover:-translate-y-0.5"
+                >
+                  Explore Catalog
+                </button>
+              </div>
+            </div>
+
+            {/* Right Side: Fresh Produce Image Container */}
+            <div className="lg:col-span-6 relative flex justify-center items-center">
+              <div className="w-full max-h-[500px] overflow-hidden rounded-2xl flex items-center justify-center shadow-xl border border-gray-100 bg-gray-50/80 backdrop-blur-xs p-2">
+                <img
+                  src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=1000&auto=format&fit=crop"
+                  alt="Fresh fruits produce warehouse"
+                  className="w-full h-[440px] object-cover rounded-xl shadow-md border border-white/60 transform hover:scale-[1.01] transition-transform duration-500"
+                  onError={(e) => {
+                    // Fallback SVG if network is restricted
+                    (e.currentTarget as HTMLImageElement).src =
+                      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'><rect width='100%' height='100%' fill='%23E5E7EB'/><text x='50%' y='50%' fill='%2371C168' font-size='28' font-family='Roboto' font-weight='bold' text-anchor='middle'>Fresh Fruit Warehouse & Market</text></svg>";
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES SECTION */}
+      <section className="py-20 bg-[#F9FAFB] flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto space-y-4">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] tracking-tight">
+              The Future of Freshness Management
+            </h2>
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
+              A unified intelligence layer for the entire fruit supply chain,
+              maximizing freshness from warehouse to table through advanced
+              automation and data-driven insights.
+            </p>
+          </div>
+
+          {/* 2x2 Feature Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Card 1 */}
+            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
+              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+                <ScanLine className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-[#1F2937]">
+                AI Quality Control
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Automated scanning and computer vision ensure only the highest grade
+                produce enters the ecosystem, reducing waste and guaranteeing premium
+                quality.
+              </p>
+            </div>
+
+            {/* Card 2 */}
+            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
+              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+                <Grid className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-[#1F2937]">
+                Intelligent Catalog
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Real-time stock visibility and high-fidelity imagery provide a seamless
+                browsing experience for retail and bulk buyers alike.
+              </p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
+              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+                <Truck className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-[#1F2937]">
+                Smart Logistics
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Dynamic route optimization and cold-chain monitoring minimize transit
+                times, ensuring fruit arrives at peak freshness.
+              </p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
+              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+                <TrendingUp className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-bold text-[#1F2937]">
+                Demand Forecasting
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Predictive analytics anticipate market needs, allowing for precise
+                inventory management and a more sustainable supply chain.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-white border-t border-gray-200 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          {/* Footer Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-[#71C168] flex items-center justify-center text-white">
+              <Leaf className="w-4 h-4" />
+            </div>
+            <span className="font-extrabold text-xl tracking-tight text-[#1F2937]">
+              Stakeholder
+            </span>
+          </div>
+
+          {/* Footer Nav Links */}
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 font-medium">
+            <a href="#" className="hover:text-[#71C168] transition-colors">
+              Privacy Policy
+            </a>
+            <a href="#" className="hover:text-[#71C168] transition-colors">
+              Terms of Service
+            </a>
+            <a href="#" className="hover:text-[#71C168] transition-colors">
+              Contact Support
+            </a>
+            <a href="#" className="hover:text-[#71C168] transition-colors">
+              About Us
+            </a>
+          </div>
+
+          {/* Copyright */}
+          <div className="text-sm text-gray-500 font-normal">
+            © 2026 Stakeholder. All rights reserved.
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}

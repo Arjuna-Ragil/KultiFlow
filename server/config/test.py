@@ -1,0 +1,1 @@
+# Segala config kek postgres atau s3 gitu masuk ke sini
