@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { ScanLine, Grid, Truck, TrendingUp, Leaf } from "lucide-react";
 import Particles from "@/components/Particles";
