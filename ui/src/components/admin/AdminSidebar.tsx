@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { FileText, LayoutDashboard, Route, Scan, TrendingUp } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -14,9 +16,11 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
 
   const activeItem: NavItem = currentPath.includes("/qc")
     ? "qc"
-    : currentPath.includes("/dashboard")
-      ? "dashboard"
-      : "dashboard";
+    : currentPath.includes("/route")
+      ? "route"
+      : currentPath.includes("/dashboard")
+        ? "dashboard"
+        : "dashboard";
 
   return (
     <aside className="flex w-64 shrink-0 flex-col justify-between border-r border-gray-200 bg-white">
@@ -46,13 +50,17 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
             <span>QC</span>
           </Link>
 
-          <button
-            disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60"
+          <Link
+            href="/admin/route"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "route"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
           >
             <Route className="h-5 w-5" />
             <span>Route Optimization</span>
-          </button>
+          </Link>
 
           <button
             disabled
