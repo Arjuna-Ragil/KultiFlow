@@ -458,7 +458,7 @@ export default function AdminQCDashboard() {
           {/* Logo "Stakeholder" */}
           <div className="p-6 border-b border-gray-100 flex flex-col gap-1">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-[#71C168] flex items-center justify-center text-white">
+              <div className="w-8 h-8 rounded-lg bg-[#86CA7F] flex items-center justify-center text-white">
                 <Leaf className="w-4 h-4" />
               </div>
               <span className="font-extrabold text-2xl tracking-tight text-[#1F2937]">
@@ -482,7 +482,7 @@ export default function AdminQCDashboard() {
             </button>
 
             {/* QC (ACTIVE STATE) */}
-            <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[#71C168] bg-[#71C168]/10 border-l-4 border-[#71C168] transition-all">
+            <div className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-[#86CA7F] bg-[#86CA7F]/10 border-l-4 border-[#86CA7F] transition-all">
               <Scan className="w-5 h-5" />
               <span>QC</span>
             </div>
@@ -542,7 +542,7 @@ export default function AdminQCDashboard() {
             <input
               type="text"
               placeholder="Search inventory..."
-              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71C168] focus:bg-white transition-all text-[#1F2937]"
+              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#86CA7F] focus:bg-white transition-all text-[#1F2937]"
             />
           </div>
 
@@ -576,7 +576,7 @@ export default function AdminQCDashboard() {
                     {notifications.length > 0 && (
                       <button
                         onClick={markNotifsAsRead}
-                        className="text-[11px] font-semibold text-[#71C168] hover:underline"
+                        className="text-[11px] font-semibold text-[#86CA7F] hover:underline"
                       >
                         Mark all read
                       </button>
@@ -592,7 +592,7 @@ export default function AdminQCDashboard() {
                         <div
                           key={n.id}
                           className={`p-3.5 text-xs flex items-start gap-2.5 transition-colors ${
-                            !n.read ? "bg-[#71C168]/5" : "hover:bg-gray-50"
+                            !n.read ? "bg-[#86CA7F]/5" : "hover:bg-gray-50"
                           }`}
                         >
                           <div
@@ -600,7 +600,7 @@ export default function AdminQCDashboard() {
                               n.type === "warning"
                                 ? "bg-[#DC2626]"
                                 : n.type === "success"
-                                ? "bg-[#71C168]"
+                                ? "bg-[#86CA7F]"
                                 : "bg-blue-500"
                             }`}
                           />
@@ -635,7 +635,7 @@ export default function AdminQCDashboard() {
           {/* PAGE TITLE */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-extrabold text-[#71C168]">
+              <h1 className="text-3xl font-extrabold text-[#86CA7F]">
                 AI Quality Control
               </h1>
               <p className="text-sm text-gray-500 mt-1">
@@ -672,7 +672,7 @@ export default function AdminQCDashboard() {
                     className={`px-6 py-2.5 rounded-lg font-bold text-sm text-white shadow-xs transition-colors flex items-center gap-2 ${
                       isScanning
                         ? "bg-gray-300 cursor-not-allowed opacity-60"
-                        : "bg-[#71C168] hover:bg-[#62b059]"
+                        : "bg-[#86CA7F] hover:bg-[#74BA6C]"
                     }`}
                   >
                     Start
@@ -707,7 +707,7 @@ export default function AdminQCDashboard() {
                   /* INACTIVE STATE: Big Green "Activate WebCam" Button */
                   <button
                     onClick={startBatchScan}
-                    className="px-8 py-4 rounded-2xl bg-[#71C168] hover:bg-[#62b059] text-white font-black text-xl shadow-xl transition-all transform hover:scale-105 flex items-center gap-3 z-10"
+                    className="px-8 py-4 rounded-2xl bg-[#86CA7F] hover:bg-[#74BA6C] text-white font-black text-xl shadow-xl transition-all transform hover:scale-105 flex items-center gap-3 z-10"
                   >
                     <Camera className="w-8 h-8" />
                     <span>Activate WebCam</span>
@@ -739,7 +739,7 @@ export default function AdminQCDashboard() {
                         }}
                         className={`absolute border-4 transition-all duration-300 rounded-xl pointer-events-none flex flex-col justify-between p-2 ${
                           box.type === "fresh"
-                            ? "border-[#71C168] bg-[#71C168]/15 shadow-[0_0_18px_rgba(113,193,104,0.4)]"
+                            ? "border-[#86CA7F] bg-[#86CA7F]/15 shadow-[0_0_18px_rgba(113,193,104,0.4)]"
                             : "border-[#DC2626] border-dashed bg-[#DC2626]/15 shadow-[0_0_18px_rgba(220,38,38,0.4)]"
                         }`}
                       >
@@ -748,7 +748,7 @@ export default function AdminQCDashboard() {
                           <span
                             className={`px-2.5 py-1 rounded-md text-xs font-black text-white shadow-md flex items-center gap-1.5 ${
                               box.type === "fresh"
-                                ? "bg-[#71C168]"
+                                ? "bg-[#86CA7F]"
                                 : "bg-[#DC2626]"
                             }`}
                           >
@@ -764,7 +764,7 @@ export default function AdminQCDashboard() {
                     ))}
 
                     {/* Active Scan Indicator Line */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-[#71C168] shadow-[0_0_14px_#71C168] animate-scanline" />
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-[#86CA7F] shadow-[0_0_14px_#86CA7F] animate-scanline" />
                   </div>
                 )}
               </div>
@@ -784,7 +784,7 @@ export default function AdminQCDashboard() {
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Total Scanned
                     </span>
-                    <span className="text-3xl font-black text-[#71C168] mt-1">
+                    <span className="text-3xl font-black text-[#86CA7F] mt-1">
                       {isScanning
                         ? batchScannedCount.toLocaleString()
                         : "1,248"}
@@ -824,7 +824,7 @@ export default function AdminQCDashboard() {
                         <div
                           className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
                             item.status === "Fresh"
-                              ? "bg-[#71C168]/15 text-[#71C168]"
+                              ? "bg-[#86CA7F]/15 text-[#86CA7F]"
                               : "bg-[#DC2626]/15 text-[#DC2626]"
                           }`}
                         >
@@ -849,7 +849,7 @@ export default function AdminQCDashboard() {
                         <span
                           className={`px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 ${
                             item.status === "Fresh"
-                              ? "bg-[#71C168]/20 text-[#71C168]"
+                              ? "bg-[#86CA7F]/20 text-[#86CA7F]"
                               : "bg-[#DC2626]/20 text-[#DC2626]"
                           }`}
                         >
@@ -890,7 +890,7 @@ export default function AdminQCDashboard() {
                     4,289
                   </div>
                 </div>
-                <div className="text-xs font-bold text-[#71C168] mt-4 flex items-center gap-1">
+                <div className="text-xs font-bold text-[#86CA7F] mt-4 flex items-center gap-1">
                   <span>↑ +12% vs yesterday</span>
                 </div>
               </div>
@@ -910,7 +910,7 @@ export default function AdminQCDashboard() {
                     </div>
                     <div className="w-full h-3 bg-red-100 rounded-full overflow-hidden flex">
                       <div
-                        className="bg-[#71C168] h-full rounded-full"
+                        className="bg-[#86CA7F] h-full rounded-full"
                         style={{ width: "92%" }}
                       />
                     </div>
@@ -924,7 +924,7 @@ export default function AdminQCDashboard() {
                     </div>
                     <div className="w-full h-3 bg-red-100 rounded-full overflow-hidden flex">
                       <div
-                        className="bg-[#71C168] h-full rounded-full"
+                        className="bg-[#86CA7F] h-full rounded-full"
                         style={{ width: "85%" }}
                       />
                     </div>
@@ -938,7 +938,7 @@ export default function AdminQCDashboard() {
                     </div>
                     <div className="w-full h-3 bg-red-100 rounded-full overflow-hidden flex">
                       <div
-                        className="bg-[#71C168] h-full rounded-full"
+                        className="bg-[#86CA7F] h-full rounded-full"
                         style={{ width: "78%" }}
                       />
                     </div>
@@ -958,7 +958,7 @@ export default function AdminQCDashboard() {
                     Updated from live QC scan
                   </span>
                 </div>
-                <button className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-[#71C168] border border-gray-200 px-3 py-1.5 rounded-lg">
+                <button className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-[#86CA7F] border border-gray-200 px-3 py-1.5 rounded-lg">
                   <Filter className="w-3.5 h-3.5" />
                   <span>Filter</span>
                 </button>
@@ -1004,13 +1004,13 @@ export default function AdminQCDashboard() {
                           <span
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
                               row.result === "Fresh"
-                                ? "bg-[#71C168]/20 text-[#71C168]"
+                                ? "bg-[#86CA7F]/20 text-[#86CA7F]"
                                 : "bg-[#DC2626]/20 text-[#DC2626]"
                             }`}
                           >
                             {row.result === "Fresh" ? (
                               <>
-                                <CheckCircle2 className="w-4 h-4 shrink-0 text-[#71C168]" />
+                                <CheckCircle2 className="w-4 h-4 shrink-0 text-[#86CA7F]" />
                                 <span>Fresh</span>
                               </>
                             ) : (
@@ -1023,7 +1023,7 @@ export default function AdminQCDashboard() {
                         </td>
 
                         <td className="py-4 px-6 text-center">
-                          <button className="p-1.5 rounded-lg text-gray-400 hover:text-[#71C168] hover:bg-gray-100 transition-colors">
+                          <button className="p-1.5 rounded-lg text-gray-400 hover:text-[#86CA7F] hover:bg-gray-100 transition-colors">
                             <Eye className="w-4 h-4" />
                           </button>
                         </td>
