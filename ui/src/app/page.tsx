@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ScanLine, Grid, Truck, TrendingUp, Leaf } from "lucide-react";
-import Particles from "@/components/Particles";
+import GradientWaves from "@/components/GradientWaves";
 
 export default function LandingPage() {
   return (
@@ -12,7 +12,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo "Stakeholder" */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-[#71C168] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
+            <div className="w-9 h-9 rounded-xl bg-[#86CA7F] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
               <Leaf className="w-5 h-5 fill-white/20" />
             </div>
             <div className="flex flex-col">
@@ -36,7 +36,7 @@ export default function LandingPage() {
             <button
               disabled
               aria-disabled="true"
-              className="px-5 py-2.5 rounded-lg bg-[#71C168] text-white text-sm font-semibold cursor-not-allowed opacity-85 shadow-xs flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-lg bg-[#86CA7F] text-white text-sm font-semibold cursor-not-allowed opacity-85 shadow-xs flex items-center gap-1.5"
               title="Customer Login temporarily disabled"
             >
               Login as Customer
@@ -46,36 +46,41 @@ export default function LandingPage() {
       </header>
 
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-white border-b border-gray-100 py-16 md:py-24">
-        {/* React Bits Particles in background of Main 1 area */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-50">
-          <Particles
-            particleCount={180}
-            particleSpread={12}
-            speed={0.15}
-            particleColors={["#71C168", "#4ade80", "#a3e635"]}
-            moveParticlesOnHover
-            particleHoverFactor={1}
-            alphaParticles={true}
-            particleBaseSize={80}
-            sizeRandomness={0.8}
-            cameraDistance={20}
-            disableRotation={false}
+      <section className="relative overflow-hidden bg-[#F5F5F5] border-b border-gray-200 py-16 md:py-24 min-h-[600px] flex items-center">
+        {/* React Bits GradientWaves in background of Main 1 area */}
+        <div className="absolute inset-0 z-0 w-full h-full">
+          <GradientWaves
+            horizonColor="#84CC16"
+            waveColor="#86CA7F"
+            crestColor="#FFFFFF"
+            canvasBackground="#FFFFFF"
+            speed={0.4}
+            amplitude={2.5}
+            waveScale={0.6}
+            waveRatio={0.9}
+            swell={35}
+            turbulence={20}
+            tilt={1.11}
+            zoom={1.4}
+            height={5.5}
+            fogDepth={15}
+            detail="medium"
+            brightness={1}
+            opacity={1}
+            grain
+            grainIntensity={0.05}
+            mouseInteraction
+            parallaxStrength={0.5}
           />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pointer-events-none">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pointer-events-auto">
             {/* Left Content */}
             <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#71C168]/10 text-[#71C168] text-xs font-bold uppercase tracking-wider">
-                <span className="w-2 h-2 rounded-full bg-[#71C168] animate-pulse"></span>
-                Next-Gen Fruit Management
-              </div>
-
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#1F2937] leading-tight tracking-tight">
                 Freshness Meets{" "}
-                <span className="text-[#71C168]">Intelligence</span>
+                <span className="text-[#86CA7F]">Intelligence</span>
               </h1>
 
               <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl">
@@ -86,7 +91,7 @@ export default function LandingPage() {
               <div className="pt-2">
                 <button
                   onClick={() => alert("Catalog exploring is available in Admin QC mode.")}
-                  className="px-8 py-3.5 rounded-lg bg-[#71C168] hover:bg-[#62b059] text-white font-bold text-base shadow-md transition-all transform hover:-translate-y-0.5"
+                  className="px-8 py-3.5 rounded-lg bg-[#86CA7F] hover:bg-[#74BA6C] text-white font-bold text-base shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                 >
                   Explore Catalog
                 </button>
@@ -97,9 +102,9 @@ export default function LandingPage() {
             <div className="lg:col-span-6 relative flex justify-center items-center">
               <div className="w-full max-h-[500px] overflow-hidden rounded-2xl flex items-center justify-center shadow-xl border border-gray-100 bg-gray-50/80 backdrop-blur-xs p-2">
                 <img
-                  src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=1000&auto=format&fit=crop"
+                  src="/floating_fruits.png"
                   alt="Fresh fruits produce warehouse"
-                  className="w-full h-[440px] object-cover rounded-xl shadow-md border border-white/60 transform hover:scale-[1.01] transition-transform duration-500"
+                  className="w-full h-[440px] object-cover rounded-xl shadow-md border border-white/60"
                   onError={(e) => {
                     // Fallback SVG if network is restricted
                     (e.currentTarget as HTMLImageElement).src =
@@ -131,7 +136,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Card 1 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
-              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+              <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <ScanLine className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-[#1F2937]">
@@ -146,7 +151,7 @@ export default function LandingPage() {
 
             {/* Card 2 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
-              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+              <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <Grid className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-[#1F2937]">
@@ -160,7 +165,7 @@ export default function LandingPage() {
 
             {/* Card 3 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
-              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+              <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <Truck className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-[#1F2937]">
@@ -174,7 +179,7 @@ export default function LandingPage() {
 
             {/* Card 4 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
-              <div className="p-3.5 rounded-xl bg-[#71C168]/10 text-[#71C168] group-hover:bg-[#71C168] group-hover:text-white transition-colors">
+              <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <TrendingUp className="w-7 h-7" />
               </div>
               <h3 className="text-xl font-bold text-[#1F2937]">
@@ -194,7 +199,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Footer Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#71C168] flex items-center justify-center text-white">
+            <div className="w-7 h-7 rounded-lg bg-[#86CA7F] flex items-center justify-center text-white">
               <Leaf className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-xl tracking-tight text-[#1F2937]">
@@ -204,16 +209,16 @@ export default function LandingPage() {
 
           {/* Footer Nav Links */}
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 font-medium">
-            <a href="#" className="hover:text-[#71C168] transition-colors">
+            <a href="#" className="hover:text-[#86CA7F] transition-colors">
               Privacy Policy
             </a>
-            <a href="#" className="hover:text-[#71C168] transition-colors">
+            <a href="#" className="hover:text-[#86CA7F] transition-colors">
               Terms of Service
             </a>
-            <a href="#" className="hover:text-[#71C168] transition-colors">
+            <a href="#" className="hover:text-[#86CA7F] transition-colors">
               Contact Support
             </a>
-            <a href="#" className="hover:text-[#71C168] transition-colors">
+            <a href="#" className="hover:text-[#86CA7F] transition-colors">
               About Us
             </a>
           </div>
