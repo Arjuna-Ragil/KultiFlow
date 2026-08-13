@@ -1,5 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
 from pydantic import BaseModel
 from typing import List, Optional
 from dotenv import load_dotenv
@@ -22,6 +24,14 @@ ai_agent = genai.GenerativeModel('gemini-flash-latest')
 
 #inisialisasi Aplikasi FastAPI
 app = FastAPI(title="Smart Logistics API", version="2.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],  # Your frontend URLs
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Lokasi(BaseModel):
     nama: str
