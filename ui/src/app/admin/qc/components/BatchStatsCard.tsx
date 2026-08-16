@@ -19,7 +19,7 @@ export function BatchStatsCard({
             Total Scanned
           </span>
           <span className="mt-1 text-3xl font-black text-[#71C168]">
-            {isScanning ? batchScannedCount.toLocaleString() : "1,248"}
+            {batchScannedCount.toLocaleString()}
           </span>
         </div>
 
@@ -28,7 +28,7 @@ export function BatchStatsCard({
             Pass Rate
           </span>
           <span className="mt-1 text-3xl font-black text-[#1F2937]">
-            {livePassRate}%
+            {batchScannedCount > 0 ? `${livePassRate}%` : "0%"}
           </span>
         </div>
       </div>

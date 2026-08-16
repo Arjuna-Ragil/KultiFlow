@@ -19,69 +19,11 @@ export function QCPageContent() {
   const [batchPassCount, setBatchPassCount] = useState(0);
   const [batchDefectCount, setBatchDefectCount] = useState(0);
 
+  const [currentResult, setCurrentResult] = useState<{ label: string; confidence: number } | null>(null);
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
-  const [recentDetections, setRecentDetections] = useState<RecentDetection[]>([
-    {
-      id: "det-1",
-      name: "Gala Apple",
-      code: "ID: A-4920",
-      status: "Fresh",
-      confidence: 98,
-      time: "08:42 AM",
-    },
-    {
-      id: "det-2",
-      name: "Cavendish Banana",
-      code: "ID: B-4921",
-      status: "Defect",
-      confidence: 85,
-      time: "08:41 AM",
-    },
-    {
-      id: "det-3",
-      name: "Valencia Orange",
-      code: "ID: O-4922",
-      status: "Fresh",
-      confidence: 99,
-      time: "08:39 AM",
-    },
-  ]);
+  const [recentDetections, setRecentDetections] = useState<RecentDetection[]>([]);
 
-  const [qcHistory, setQcHistory] = useState<QCScanHistory[]>([
-    {
-      id: "#SC-0921",
-      timestamp: "08:42:15 AM",
-      fruitType: "Apple",
-      fruitSubtype: "Gala",
-      result: "Fresh",
-      passCount: 24,
-      defectCount: 1,
-      thumbnailUrl:
-        "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=200&auto=format&fit=crop",
-    },
-    {
-      id: "#SC-0920",
-      timestamp: "08:41:03 AM",
-      fruitType: "Banana",
-      fruitSubtype: "Cavendish",
-      result: "Bruised (Reject)",
-      passCount: 15,
-      defectCount: 6,
-      thumbnailUrl:
-        "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?q=80&w=200&auto=format&fit=crop",
-    },
-    {
-      id: "#SC-0919",
-      timestamp: "08:39:55 AM",
-      fruitType: "Orange",
-      fruitSubtype: "Valencia",
-      result: "Fresh",
-      passCount: 30,
-      defectCount: 2,
-      thumbnailUrl:
-        "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?q=80&w=200&auto=format&fit=crop",
-    },
-  ]);
+  const [qcHistory, setQcHistory] = useState<QCScanHistory[]>([]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -128,7 +70,11 @@ export function QCPageContent() {
       clearInterval(scanIntervalRef.current);
     }
 
+    let isRequestPending = false;
+
     scanIntervalRef.current = setInterval(async () => {
+      if (isRequestPending) return;
+      
       let isFreshResult = true;
       let confidenceScore = 92;
 
@@ -155,29 +101,41 @@ export function QCPageContent() {
               const formData = new FormData();
               formData.append("file", blob, "frame.jpg");
 
-              const response = await fetch("/api/inspection/inspect", {
+              isRequestPending = true;
+              const response = await fetch("http://localhost:8000/api/inspection/inspect", {
                 method: "POST",
                 body: formData,
               });
 
               if (response.ok) {
                 const data = await response.json();
-                if (data.label) {
+                if (data.label && data.label.toLowerCase() !== "none") {
                   isFreshResult = data.label.toLowerCase() === "fresh";
                   confidenceScore = Math.round((data.confidence || 0.9) * 100);
+                  
+                  setCurrentResult({
+                    label: isFreshResult ? "Fresh" : "Defect",
+                    confidence: confidenceScore / 100,
+                  });
+
+                  updateDetections(isFreshResult ? "Fresh" : "Defect", confidenceScore, selectedFruit);
+                } else if (data.label && data.label.toLowerCase() === "none") {
+                  // No fruit detected in frame, clear current result overlay
+                  setCurrentResult(null);
                 }
+              } else {
+                console.error("Server returned an error", response.status);
+                setCurrentResult(null);
               }
             }
           } catch (error) {
-            console.error("API inspection call failed, using model standard fallback", error);
+            console.error("API inspection call failed", error);
+            setCurrentResult(null);
+          } finally {
+            isRequestPending = false;
           }
         }
-      } else {
-        isFreshResult = Math.random() > 0.3;
-        confidenceScore = Math.floor(85 + Math.random() * 14);
       }
-
-      updateDetections(isFreshResult ? "Fresh" : "Defect", confidenceScore, selectedFruit);
     }, 1800);
   };
 
@@ -189,55 +147,13 @@ export function QCPageContent() {
     const fruitParts = fruitFullName.split(" ");
     const fruitName = fruitParts[0] || "Fruit";
 
-    const mainBoxX = 25 + Math.floor(Math.random() * 12);
-    const mainBoxY = 20 + Math.floor(Math.random() * 15);
-    const boxes: BoundingBox[] = [
-      {
-        id: `box-${Date.now()}-1`,
-        name: `${fruitName} - ${status} (${confidence}%)`,
-        type: status === "Fresh" ? "fresh" : "defect",
-        confidence,
-        x: mainBoxX,
-        y: mainBoxY,
-        width: 32 + Math.floor(Math.random() * 8),
-        height: 44 + Math.floor(Math.random() * 10),
-      },
-    ];
-
-    if (Math.random() > 0.45) {
-      const secFresh = Math.random() > 0.35;
-      const secConf = Math.floor(82 + Math.random() * 16);
-      boxes.push({
-        id: `box-${Date.now()}-2`,
-        name: `${fruitName} - ${secFresh ? "Fresh" : "Defect"} (${secConf}%)`,
-        type: secFresh ? "fresh" : "defect",
-        confidence: secConf,
-        x: Math.min(65, mainBoxX + 28),
-        y: Math.min(50, mainBoxY + 8),
-        width: 28 + Math.floor(Math.random() * 6),
-        height: 40 + Math.floor(Math.random() * 8),
-      });
-    }
-
-    setBoundingBoxes(boxes);
-
-    setBatchScannedCount((prev) => prev + boxes.length);
+    setBatchScannedCount((prev) => prev + 1);
     let defectsAdded = 0;
-    boxes.forEach((box) => {
-      if (box.type === "fresh") {
-        setBatchPassCount((prev) => prev + 1);
-      } else {
-        setBatchDefectCount((prev) => prev + 1);
-        defectsAdded += 1;
-      }
-    });
-
-    if (defectsAdded > 0 && Math.random() > 0.5) {
-      addNotification(
-        "Defect Detected",
-        `${defectsAdded} defective item(s) flagged in ${fruitFullName} scan.`,
-        "warning"
-      );
+    if (status === "Fresh") {
+      setBatchPassCount((prev) => prev + 1);
+    } else {
+      setBatchDefectCount((prev) => prev + 1);
+      defectsAdded += 1;
     }
 
     const newDet: RecentDetection = {
@@ -260,13 +176,18 @@ export function QCPageContent() {
     setCameraError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: { facingMode: "environment" },
       });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        void videoRef.current.play();
-      }
       setIsCameraActive(true);
+      
+      // Wait for the next render so the video element is mounted before setting srcObject
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          void videoRef.current.play();
+        }
+      }, 50);
+
       setIsScanning(true);
       setSeconds(0);
       setBatchScannedCount(0);
@@ -275,14 +196,9 @@ export function QCPageContent() {
       startFrameInspection();
     } catch (error) {
       console.warn("Webcam access error:", error);
-      setCameraError("Camera stream active. Point produce at camera for AI detection.");
-      setIsCameraActive(true);
-      setIsScanning(true);
-      setSeconds(0);
-      setBatchScannedCount(0);
-      setBatchPassCount(0);
-      setBatchDefectCount(0);
-      startFrameInspection();
+      setCameraError("Failed to access camera. Please ensure permissions are granted.");
+      setIsCameraActive(false);
+      setIsScanning(false);
     }
   };
 
@@ -351,7 +267,7 @@ export function QCPageContent() {
 
     setIsScanning(false);
     setIsCameraActive(false);
-    setBoundingBoxes([]);
+    setCurrentResult(null);
   };
 
   const livePassRate =
@@ -385,7 +301,7 @@ export function QCPageContent() {
             onStopScan={stopBatchScan}
             videoRef={videoRef}
             canvasRef={canvasRef}
-            boundingBoxes={boundingBoxes}
+            currentResult={currentResult}
           />
 
           <div className="space-y-6 lg:col-span-4">
@@ -405,14 +321,11 @@ export function QCPageContent() {
                 <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
                   TOTAL SCANS (TODAY)
                 </span>
-                <div className="mt-2 text-4xl font-black text-[#1F2937]">4,289</div>
-              </div>
-              <div className="mt-4 flex items-center gap-1 text-xs font-bold text-[#71C168]">
-                <span>↑ +12% vs yesterday</span>
+                <div className="mt-2 text-4xl font-black text-[#1F2937]">{qcHistory.length}</div>
               </div>
             </div>
 
-            <FreshnessOverviewCard />
+            <FreshnessOverviewCard qcHistory={qcHistory} />
           </div>
 
           <RecentScansTable qcHistory={qcHistory} />
