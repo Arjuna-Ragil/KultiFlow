@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FileText, LayoutDashboard, Route, Scan, TrendingUp } from "lucide-react";
+import { FileText, LayoutDashboard, Route, Scan, TrendingUp, Leaf, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 type NavItem = "dashboard" | "qc" | "route" | "forecasting" | "invoices";
@@ -25,6 +25,19 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
   return (
     <aside className="flex w-64 shrink-0 flex-col justify-between border-r border-gray-200 bg-white">
       <div>
+        <Link href="/" className="flex items-center gap-3 px-6 py-6 mb-2 border-b border-gray-100">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#71C168] text-white">
+            <Leaf className="h-4 w-4" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xl font-extrabold tracking-tight text-[#1F2937]">
+              Stakeholder
+            </span>
+            <span className="text-[10px] font-medium text-gray-500">
+              Warehouse Management
+            </span>
+          </div>
+        </Link>
         <nav className="space-y-1 p-4">
           <Link
             href="/admin/dashboard"
@@ -80,7 +93,14 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
         </nav>
       </div>
 
-      <div className="border-t border-gray-100 p-4">
+      <div className="border-t border-gray-100 p-4 space-y-2">
+        <Link
+          href="/"
+          className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-[#DC2626]"
+        >
+          <LogOut className="h-5 w-5" />
+          <span>Logout</span>
+        </Link>
         <div className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50">
           <img
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
