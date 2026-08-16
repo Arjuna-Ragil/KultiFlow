@@ -5,7 +5,6 @@ interface FreshnessOverviewCardProps {
 }
 
 export function FreshnessOverviewCard({ qcHistory }: FreshnessOverviewCardProps) {
-  // Calculate aggregated stats by fruit type from history
   const fruitStats: Record<string, { pass: number; defect: number }> = {};
   
   qcHistory.forEach((scan) => {

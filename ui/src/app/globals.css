@@ -20,7 +20,6 @@ body {
   padding: 0;
 }
 
-/* Bounding box scanning line animation */
 @keyframes scanline {
   0% {
     top: 0%;
@@ -37,7 +36,6 @@ body {
   animation: scanline 2.5s ease-in-out infinite;
 }
 
-/* Pulsing badge animation */
 @keyframes pulse-subtle {
   0%, 100% {
     opacity: 1;

@@ -1,22 +1,7 @@
 import Link from "next/link";
-import { Bell, Leaf, LogOut, Search } from "lucide-react";
-import type { NotificationItem } from "./types";
+import { Leaf, LogOut } from "lucide-react";
 
-interface AdminHeaderProps {
-  notifications: NotificationItem[];
-  unreadCount: number;
-  isNotifOpen: boolean;
-  onToggleNotifications: () => void;
-  onMarkAllRead: () => void;
-}
-
-export function AdminHeader({
-  notifications,
-  unreadCount,
-  isNotifOpen,
-  onToggleNotifications,
-  onMarkAllRead,
-}: AdminHeaderProps) {
+export function AdminHeader() {
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-gray-200 bg-white px-8">
       <div className="flex flex-col gap-1 border-b border-gray-100 p-6">

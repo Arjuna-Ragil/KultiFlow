@@ -1,6 +1,5 @@
-import { Camera, CheckCircle2, Info } from "lucide-react";
+import { Camera } from "lucide-react";
 import type { RefObject } from "react";
-import type { BoundingBox } from "./types";
 
 interface CameraPanelProps {
   isCameraActive: boolean;
@@ -110,7 +109,6 @@ export function CameraPanel({
             />
             <canvas ref={canvasRef} className="hidden" />
 
-            {/* Result Overlay */}
             {currentResult && (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm">
                 <div className={`p-4 rounded-2xl backdrop-blur-xl border flex items-center justify-between shadow-2xl transition-all duration-300 ${
