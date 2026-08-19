@@ -27,17 +27,15 @@ export function QCPageContent() {
   } = useQCLogic();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="mx-auto w-full max-w-7xl space-y-8 p-8">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h1 className="text-3xl font-extrabold text-[#71C168]">
-              AI Quality Control
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Live camera feed for automated produce scan & inspection.
-            </p>
-          </div>
+    <div className="min-h-full bg-gray-50">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 pt-2 pb-8 space-y-6">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
+            AI Quality Control
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Live camera feed for automated produce scan & inspection.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
@@ -81,7 +79,7 @@ export function QCPageContent() {
 
           <RecentScansTable qcHistory={qcHistory} />
         </div>
-      </main>
+      </div>
     </div>
   );
 }

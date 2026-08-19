@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { AdminHeader, type NotificationItem } from "./AdminHeader";
+import { AdminHeader } from "./AdminHeader";
 import { AdminSidebar } from "./AdminSidebar";
+import type { NotificationItem } from "./types";
 
 interface AdminShellProps {
   children: ReactNode;
@@ -61,7 +62,7 @@ export function AdminShell({ children }: AdminShellProps) {
           onToggleNotifications={handleToggleNotifications}
           onMarkAllRead={markNotifsAsRead}
         />
-        <main className="flex-1 min-w-0 overflow-y-auto">{children}</main>
+        <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

@@ -264,7 +264,7 @@ export function useQCLogic() {
   const livePassRate =
     batchScannedCount > 0
       ? Math.round((batchPassCount / batchScannedCount) * 100)
-      : 94;
+      : 0;
 
   return {
     isCameraActive,

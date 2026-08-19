@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, LogOut, X, CheckCircle2, ShieldAlert, Sparkles } from "lucide-react";
+import { Bell, LogOut, X, CheckCircle2, Sparkles, ShieldAlert } from "lucide-react";
 
 export interface NotificationItem {
   id: string;

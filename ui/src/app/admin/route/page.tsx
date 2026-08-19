@@ -20,30 +20,36 @@ export default function Page() {
   } = useRouteOptimization();
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-extrabold text-[#71C168]">Routing Optimization</h1>
-        <p className="mt-2 text-sm text-gray-500">Configure your fleet and delivery destinations below to calculate the most efficient routes.</p>
-      </div>
+    <div className="min-h-full bg-gray-50">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 pt-2 pb-8 space-y-6">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
+            Route Optimization
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Configure your fleet and delivery destinations below to calculate the most efficient routes.
+          </p>
+        </div>
 
-      <div className="grid grid-cols-12 gap-8">
-        <RouteForm
-          form={form}
-          setForm={setForm}
-          errors={errors}
-          loading={loading}
-          errorMsg={errorMsg}
-          totalDemand={totalDemand}
-          handleAddDestination={handleAddDestination}
-          handleRemoveDestination={handleRemoveDestination}
-          handleReset={handleReset}
-          handleSubmit={handleSubmit}
-        />
-        
-        <OptimizationResults 
-          loading={loading}
-          results={results}
-        />
+        <div className="grid grid-cols-12 gap-8 items-start">
+          <RouteForm
+            form={form}
+            setForm={setForm}
+            errors={errors}
+            loading={loading}
+            errorMsg={errorMsg}
+            totalDemand={totalDemand}
+            handleAddDestination={handleAddDestination}
+            handleRemoveDestination={handleRemoveDestination}
+            handleReset={handleReset}
+            handleSubmit={handleSubmit}
+          />
+          
+          <OptimizationResults 
+            loading={loading}
+            results={results}
+          />
+        </div>
       </div>
     </div>
   );

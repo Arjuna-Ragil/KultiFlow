@@ -9,7 +9,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Stakeholder - Freshness Meets Intelligence",
+  title: "KultiFlow - Freshness Meets Intelligence",
   description: "Automated AI Quality Control and Warehouse Management Platform for Fresh Produce.",
 };
 
