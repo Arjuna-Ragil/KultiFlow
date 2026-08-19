@@ -151,170 +151,262 @@ export default function Page() {
   const totalDemand = useMemo(() => form.destinations.reduce((s, d) => s + Number(d.demand || 0), 0), [form.destinations])
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-semibold mb-4">Routing — Optimize</h1>
-      <div className="grid grid-cols-12 gap-6">
-        <form className="col-span-12 md:col-span-5 bg-white p-4 rounded shadow" onSubmit={handleSubmit}>
-          <h2 className="font-medium mb-3">Input</h2>
-          <div className="space-y-3">
-            <label className="block">
-              <div className="text-sm text-gray-600">Number of vehicles</div>
-              <input
-                type="number"
-                min={1}
-                className="mt-1 block w-full border rounded px-2 py-1"
-                value={form.vehicleCount}
-                onChange={(ev) => setForm((cur) => ({ ...cur, vehicleCount: Math.max(1, Number(ev.target.value) || 1) }))}
-              />
-            </label>
+    <div className="min-h-full bg-gray-50">
+      <div className="mx-auto w-full max-w-7xl space-y-8 p-6 sm:p-8">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
+            Routing Optimization
+          </h1>
+          <p className="mt-1.5 text-sm text-gray-500">
+            Configure your fleet and delivery destinations below to calculate the most efficient routes.
+          </p>
+        </div>
 
-            <div>
-              <div className="text-sm text-gray-600 mb-1">Vehicle capacities</div>
-              {errors.capacities && <div className="text-sm text-red-600 mb-1">{errors.capacities}</div>}
-              <div className="grid grid-cols-2 gap-2">
-                {form.capacities.map((c, idx) => (
-                  <input
-                    key={idx}
-                    type="number"
-                    min={0}
-                    className="border rounded px-2 py-1"
-                    value={c}
-                    onChange={(ev) => setForm((cur) => {
-                      const caps = [...cur.capacities]
-                      caps[idx] = ev.target.value
-                      return { ...cur, capacities: caps }
-                    })}
-                    placeholder={`Vehicle ${idx + 1}`}
-                  />
-                ))}
+        <div className="grid grid-cols-12 gap-8 items-start">
+          <form className="col-span-12 lg:col-span-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-xs" onSubmit={handleSubmit}>
+            <h2 className="text-lg font-bold text-[#1F2937] mb-4">Fleet & Delivery Parameters</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Number of vehicles
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  className="block w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-[#1F2937] transition-all focus:border-[#71C168] focus:outline-none focus:ring-1 focus:ring-[#71C168]"
+                  value={form.vehicleCount}
+                  onChange={(ev) => setForm((cur) => ({ ...cur, vehicleCount: Math.max(1, Number(ev.target.value) || 1) }))}
+                />
               </div>
-            </div>
 
-            <div>
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-600 mb-1">Destinations</div>
-                <div className="space-x-2">
-                  <button type="button" className="px-3 py-1 rounded bg-gray-100 text-sm" onClick={handleAddDestination}>Add</button>
-                  <button type="button" className="px-3 py-1 rounded bg-gray-100 text-sm" onClick={handleReset}>Reset</button>
-                </div>
-              </div>
-              {errors.destinations && (errors.destinations as any).global && (
-                <div className="text-sm text-red-600">{(errors.destinations as any).global.name}</div>
-              )}
-              <div className="space-y-3 mt-2">
-                {form.destinations.map((d, i) => {
-                  const derrs = (errors.destinations as any) || {}
-                  return (
-                    <div key={d.id} className="border rounded p-2">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="font-medium">Destination {i + 1}</div>
-                        <div className="space-x-2">
-                          <button type="button" className="text-sm text-red-600" onClick={() => handleRemoveDestination(d.id)}>Remove</button>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
-                          <input className="w-full border px-2 py-1 rounded" placeholder="Name" value={d.name} onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, name: ev.target.value } : x) }))} />
-                        </div>
-                        <div>
-                          <select className="w-full border px-2 py-1 rounded" value={d.urgency} onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, urgency: ev.target.value as any } : x) }))}>
-                            <option value="normal">Normal</option>
-                            <option value="high">High</option>
-                            <option value="low">Low</option>
-                          </select>
-                        </div>
-                        <div>
-                          <input className="w-full border px-2 py-1 rounded" placeholder="Latitude" value={d.lat} onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, lat: ev.target.value } : x) }))} />
-                          {derrs[d.id] && derrs[d.id].lat && <div className="text-sm text-red-600">{derrs[d.id].lat}</div>}
-                        </div>
-                        <div>
-                          <input className="w-full border px-2 py-1 rounded" placeholder="Longitude" value={d.lon} onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, lon: ev.target.value } : x) }))} />
-                          {derrs[d.id] && derrs[d.id].lon && <div className="text-sm text-red-600">{derrs[d.id].lon}</div>}
-                        </div>
-                        <div>
-                          <input className="w-full border px-2 py-1 rounded" placeholder="Demand" value={d.demand} onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, demand: ev.target.value } : x) }))} />
-                          {derrs[d.id] && derrs[d.id].demand && <div className="text-sm text-red-600">{derrs[d.id].demand}</div>}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-600">Total demand: {totalDemand}</div>
-              <div className="space-x-2">
-                <button type="submit" className="px-4 py-1 bg-blue-600 text-white rounded" disabled={loading}>{loading ? "Optimizing…" : "Optimize"}</button>
-                <button type="button" className="px-3 py-1 border rounded" onClick={() => { setResults(null); setErrorMsg(null); }}>Clear results</button>
-              </div>
-            </div>
-            {errorMsg && <div className="text-sm text-red-600">{errorMsg}</div>}
-          </div>
-        </form>
-
-        <div className="col-span-12 md:col-span-7">
-          <div className="bg-white p-4 rounded shadow min-h-[300px]">
-            <h2 className="font-medium mb-3">Results</h2>
-            {!results && !loading && (
-              <div className="text-sm text-gray-600">No results yet. Submit the form to run the optimizer.</div>
-            )}
-            {loading && (
-              <div className="text-sm text-gray-600">Waiting for response…</div>
-            )}
-            {results && (
-              <div className="space-y-4">
-                <div className="p-3 border rounded">
-                  <div className="flex justify-between">
-                    <div><strong>Status:</strong> {results.status || "—"}</div>
-                    <div><strong>Total travel time:</strong> {results.total_waktu_menit ?? "—"} min</div>
-                  </div>
-                  <div className="mt-2"><strong>Total load:</strong> {results.total_muatan ?? "—"}</div>
-                  {results.toko_di_drop && results.toko_di_drop.length > 0 && (
-                    <div className="mt-2">
-                      <strong>Dropped destinations:</strong>
-                      <ul className="list-disc ml-5">
-                        {results.toko_di_drop.map((dn: string) => (<li key={dn} className="text-red-600">{dn}</li>))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-3">
-                  {(results.rute_kendaraan || []).map((v: any, idx: number) => (
-                    <div key={idx} className="border rounded p-3">
-                      <div className="flex items-center justify-between">
-                        <div className="font-medium">Vehicle {v.id_kendaraan ?? idx + 1}</div>
-                        <div className="text-sm text-gray-600">Load: {v.total_muatan ?? "—"} / Time: {v.waktu_tempuh_kendaraan ?? "—"}m</div>
-                      </div>
-                      <div className="mt-2 space-y-1">
-                        {(v.detail_rute || []).map((r: any, i: number) => (
-                          <div key={i} className={`p-2 rounded ${results.toko_di_drop?.includes(r.lokasi) ? "line-through text-red-600" : ""}`}>
-                            <div className="font-medium">{r.lokasi}</div>
-                            <div className="text-xs text-gray-600">Arrival: {r.tiba_menit_ke}m | Load: {r.muatan_bawaan}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                  Vehicle capacities (kg)
+                </label>
+                {errors.capacities && <div className="text-xs font-semibold text-red-600 mb-1.5">{errors.capacities}</div>}
+                <div className="grid grid-cols-2 gap-2.5">
+                  {form.capacities.map((c, idx) => (
+                    <input
+                      key={idx}
+                      type="number"
+                      min={0}
+                      className="w-full rounded-xl border border-gray-200 px-3.5 py-2.5 text-sm text-[#1F2937] transition-all focus:border-[#71C168] focus:outline-none focus:ring-1 focus:ring-[#71C168]"
+                      value={c}
+                      onChange={(ev) => setForm((cur) => {
+                        const caps = [...cur.capacities]
+                        caps[idx] = ev.target.value
+                        return { ...cur, capacities: caps }
+                      })}
+                      placeholder={`Vehicle ${idx + 1}`}
+                    />
                   ))}
                 </div>
+              </div>
 
-                {results.pesan_dispatcher_ai && (
-                  <div className="p-3 border rounded bg-blue-50">
-                    <strong>AI Dispatcher Notes</strong>
-                    <div className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">{results.pesan_dispatcher_ai}</div>
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Destinations</span>
+                  <div className="space-x-2">
+                    <button
+                      type="button"
+                      className="rounded-lg bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-200 transition-colors"
+                      onClick={handleAddDestination}
+                    >
+                      + Add Location
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-semibold text-gray-500 hover:bg-gray-50 transition-colors"
+                      onClick={handleReset}
+                    >
+                      Reset
+                    </button>
                   </div>
+                </div>
+
+                {errors.destinations && (errors.destinations as any).global && (
+                  <div className="text-xs font-semibold text-red-600 mb-2">{(errors.destinations as any).global.name}</div>
                 )}
 
-                <div className="flex space-x-2">
-                  <button className="px-3 py-1 border rounded" onClick={() => { setResults(null); }}>Clear results</button>
-                  <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => handleSubmit()}>Retry</button>
+                <div className="space-y-3 mt-2 max-h-96 overflow-y-auto pr-1">
+                  {form.destinations.map((d, i) => {
+                    const derrs = (errors.destinations as any) || {}
+                    return (
+                      <div key={d.id} className="rounded-xl border border-gray-200 bg-gray-50/60 p-3.5 space-y-2.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs font-bold text-[#1F2937]">Destination #{i + 1}</span>
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-red-600 hover:underline"
+                            onClick={() => handleRemoveDestination(d.id)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <input
+                              className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-[#1F2937] focus:border-[#71C168] focus:outline-none"
+                              placeholder="Name"
+                              value={d.name}
+                              onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, name: ev.target.value } : x) }))}
+                            />
+                          </div>
+                          <div>
+                            <select
+                              className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-[#1F2937] focus:border-[#71C168] focus:outline-none"
+                              value={d.urgency}
+                              onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, urgency: ev.target.value as any } : x) }))}
+                            >
+                              <option value="normal">Priority: Normal</option>
+                              <option value="high">Priority: High</option>
+                              <option value="low">Priority: Low</option>
+                            </select>
+                          </div>
+                          <div>
+                            <input
+                              className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-[#1F2937] focus:border-[#71C168] focus:outline-none"
+                              placeholder="Latitude"
+                              value={d.lat}
+                              onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, lat: ev.target.value } : x) }))}
+                            />
+                            {derrs[d.id] && derrs[d.id].lat && <div className="text-[10px] text-red-600 mt-0.5">{derrs[d.id].lat}</div>}
+                          </div>
+                          <div>
+                            <input
+                              className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-[#1F2937] focus:border-[#71C168] focus:outline-none"
+                              placeholder="Longitude"
+                              value={d.lon}
+                              onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, lon: ev.target.value } : x) }))}
+                            />
+                            {derrs[d.id] && derrs[d.id].lon && <div className="text-[10px] text-red-600 mt-0.5">{derrs[d.id].lon}</div>}
+                          </div>
+                          <div className="col-span-2">
+                            <input
+                              className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-[#1F2937] focus:border-[#71C168] focus:outline-none"
+                              placeholder="Demand (Units/Kg)"
+                              value={d.demand}
+                              onChange={(ev) => setForm((cur) => ({ ...cur, destinations: cur.destinations.map((x) => x.id === d.id ? { ...x, demand: ev.target.value } : x) }))}
+                            />
+                            {derrs[d.id] && derrs[d.id].demand && <div className="text-[10px] text-red-600 mt-0.5">{derrs[d.id].demand}</div>}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-            )}
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                <span className="text-xs font-bold text-gray-500">Total Demand: <strong className="text-[#1F2937]">{totalDemand}</strong></span>
+                <div className="space-x-2">
+                  <button
+                    type="submit"
+                    className="rounded-xl bg-[#71C168] px-4 py-2 text-sm font-bold text-white shadow-xs hover:bg-[#62aa5a] transition-all disabled:opacity-50"
+                    disabled={loading}
+                  >
+                    {loading ? "Optimizing…" : "Optimize Routes"}
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-xl border border-gray-200 px-3.5 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                    onClick={() => { setResults(null); setErrorMsg(null); }}
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+              {errorMsg && <div className="text-xs font-semibold text-red-600 mt-2">{errorMsg}</div>}
+            </div>
+          </form>
+
+          <div className="col-span-12 lg:col-span-7">
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs min-h-[300px]">
+              <h2 className="text-lg font-bold text-[#1F2937] mb-4">Calculated Optimization Results</h2>
+              {!results && !loading && (
+                <div className="py-16 text-center text-sm text-gray-400">
+                  No calculation results yet. Configure parameters and click "Optimize Routes".
+                </div>
+              )}
+              {loading && (
+                <div className="py-16 text-center text-sm font-semibold text-[#71C168] animate-pulse">
+                  Analyzing coordinates & calculating optimal vehicle distribution…
+                </div>
+              )}
+              {results && (
+                <div className="space-y-4">
+                  <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-xs uppercase font-bold text-gray-400">Status</span>
+                        <div className="text-sm font-bold text-[#71C168]">{results.status || "Completed"}</div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs uppercase font-bold text-gray-400">Total Travel Time</span>
+                        <div className="text-sm font-bold text-[#1F2937]">{results.total_waktu_menit ?? "—"} mins</div>
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-gray-200/60 text-xs text-gray-600">
+                      <strong>Total Load:</strong> {results.total_muatan ?? "—"} kg
+                    </div>
+                    {results.toko_di_drop && results.toko_di_drop.length > 0 && (
+                      <div className="mt-2 text-xs">
+                        <strong className="text-red-600">Dropped Destinations:</strong>
+                        <ul className="list-disc ml-5 mt-1 text-red-600">
+                          {results.toko_di_drop.map((dn: string) => (<li key={dn}>{dn}</li>))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {(results.rute_kendaraan || []).map((v: any, idx: number) => (
+                      <div key={idx} className="rounded-xl border border-gray-200 p-3.5 bg-white">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <div className="font-bold text-sm text-[#1F2937]">Vehicle #{v.id_kendaraan ?? idx + 1}</div>
+                          <span className="text-xs font-semibold text-gray-500">{v.total_muatan ?? "—"} kg • {v.waktu_tempuh_kendaraan ?? "—"}m</span>
+                        </div>
+                        <div className="mt-2.5 space-y-1.5">
+                          {(v.detail_rute || []).map((r: any, i: number) => (
+                            <div key={i} className={`rounded-lg p-2 text-xs ${results.toko_di_drop?.includes(r.lokasi) ? "line-through text-red-600 bg-red-50" : "bg-gray-50 text-gray-700"}`}>
+                              <div className="font-semibold">{r.lokasi}</div>
+                              <div className="text-[10px] text-gray-400 mt-0.5">Arrival: {r.tiba_menit_ke}m | Load: {r.muatan_bawaan}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {results.pesan_dispatcher_ai && (
+                    <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-4">
+                      <strong className="text-xs font-bold uppercase tracking-wider text-blue-700">AI Dispatcher Recommendations</strong>
+                      <div className="text-xs text-gray-700 mt-1.5 leading-relaxed whitespace-pre-wrap">{results.pesan_dispatcher_ai}</div>
+                    </div>
+                  )}
+
+                  <div className="flex space-x-2 pt-2">
+                    <button
+                      type="button"
+                      className="rounded-xl border border-gray-200 px-3.5 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50"
+                      onClick={() => { setResults(null); }}
+                    >
+                      Clear Results
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-xl bg-[#71C168] px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-[#62aa5a]"
+                      onClick={() => handleSubmit()}
+                    >
+                      Recalculate
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
   )
-}
+}

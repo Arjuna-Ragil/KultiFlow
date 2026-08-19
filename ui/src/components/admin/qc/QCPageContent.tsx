@@ -20,68 +20,8 @@ export function QCPageContent() {
   const [batchDefectCount, setBatchDefectCount] = useState(0);
 
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
-  const [recentDetections, setRecentDetections] = useState<RecentDetection[]>([
-    {
-      id: "det-1",
-      name: "Gala Apple",
-      code: "ID: A-4920",
-      status: "Fresh",
-      confidence: 98,
-      time: "08:42 AM",
-    },
-    {
-      id: "det-2",
-      name: "Cavendish Banana",
-      code: "ID: B-4921",
-      status: "Defect",
-      confidence: 85,
-      time: "08:41 AM",
-    },
-    {
-      id: "det-3",
-      name: "Valencia Orange",
-      code: "ID: O-4922",
-      status: "Fresh",
-      confidence: 99,
-      time: "08:39 AM",
-    },
-  ]);
-
-  const [qcHistory, setQcHistory] = useState<QCScanHistory[]>([
-    {
-      id: "#SC-0921",
-      timestamp: "08:42:15 AM",
-      fruitType: "Apple",
-      fruitSubtype: "Gala",
-      result: "Fresh",
-      passCount: 24,
-      defectCount: 1,
-      thumbnailUrl:
-        "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=200&auto=format&fit=crop",
-    },
-    {
-      id: "#SC-0920",
-      timestamp: "08:41:03 AM",
-      fruitType: "Banana",
-      fruitSubtype: "Cavendish",
-      result: "Bruised (Reject)",
-      passCount: 15,
-      defectCount: 6,
-      thumbnailUrl:
-        "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?q=80&w=200&auto=format&fit=crop",
-    },
-    {
-      id: "#SC-0919",
-      timestamp: "08:39:55 AM",
-      fruitType: "Orange",
-      fruitSubtype: "Valencia",
-      result: "Fresh",
-      passCount: 30,
-      defectCount: 2,
-      thumbnailUrl:
-        "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?q=80&w=200&auto=format&fit=crop",
-    },
-  ]);
+  const [recentDetections, setRecentDetections] = useState<RecentDetection[]>([]);
+  const [qcHistory, setQcHistory] = useState<QCScanHistory[]>([]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -357,17 +297,17 @@ export function QCPageContent() {
   const livePassRate =
     batchScannedCount > 0
       ? Math.round((batchPassCount / batchScannedCount) * 100)
-      : 94;
+      : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="mx-auto w-full max-w-7xl space-y-8 p-8">
+    <div className="min-h-full bg-gray-50">
+      <div className="mx-auto w-full max-w-7xl space-y-8 p-6 sm:p-8">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h1 className="text-3xl font-extrabold text-[#71C168]">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
               AI Quality Control
             </h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1.5 text-sm text-gray-500">
               Live camera feed for automated produce scan & inspection.
             </p>
           </div>
@@ -398,26 +338,26 @@ export function QCPageContent() {
           </div>
         </div>
 
-        <div className="space-y-8 pt-4">
+        <div className="space-y-8 pt-2">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
             <div className="flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-xs lg:col-span-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
                   TOTAL SCANS (TODAY)
                 </span>
-                <div className="mt-2 text-4xl font-black text-[#1F2937]">4,289</div>
+                <div className="mt-2 text-4xl font-black text-[#1F2937]">{qcHistory.length}</div>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-xs font-bold text-[#71C168]">
-                <span>↑ +12% vs yesterday</span>
+              <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-gray-400">
+                <span>{qcHistory.length > 0 ? `↑ ${qcHistory.length} scan(s) recorded` : "0 scans completed today"}</span>
               </div>
             </div>
 
-            <FreshnessOverviewCard />
+            <FreshnessOverviewCard qcHistory={qcHistory} />
           </div>
 
           <RecentScansTable qcHistory={qcHistory} />
         </div>
-      </main>
+      </div>
     </div>
   );
 }

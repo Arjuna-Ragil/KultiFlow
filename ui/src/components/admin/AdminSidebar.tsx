@@ -23,9 +23,12 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
         : "dashboard";
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col justify-between border-r border-gray-200 bg-white">
+    <aside className="flex h-full w-64 shrink-0 flex-col justify-between border-r border-gray-200 bg-white">
       <div>
-        <nav className="space-y-1 p-4">
+        <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 h-16">
+          <img src="/kultiflow-logo.png" alt="KultiFlow Logo" className="h-6 object-contain" />
+        </div>
+        <nav className="space-y-1.5 p-4">
           <Link
             href="/admin/dashboard"
             className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
@@ -64,7 +67,7 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
 
           <button
             disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60"
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60 cursor-not-allowed"
           >
             <TrendingUp className="h-5 w-5" />
             <span>Forecasting</span>
@@ -72,7 +75,7 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
 
           <button
             disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60"
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60 cursor-not-allowed"
           >
             <FileText className="h-5 w-5" />
             <span>Invoices</span>
@@ -82,14 +85,17 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
 
       <div className="border-t border-gray-100 p-4">
         <div className="flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50">
-          <img
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
-            alt="Admin Manager"
-            className="h-10 w-10 rounded-full border border-gray-200 object-cover"
-          />
+          <div className="relative">
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
+              alt="Admin Manager"
+              className="h-10 w-10 rounded-full border border-gray-200 object-cover"
+            />
+            <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-[#71C168] ring-2 ring-white" />
+          </div>
           <div className="flex flex-col">
             <span className="text-sm font-bold text-[#1F2937]">Admin Manager</span>
-            <span className="text-xs text-gray-500">Manager</span>
+            <span className="text-xs text-gray-500">Warehouse Manager</span>
           </div>
         </div>
       </div>

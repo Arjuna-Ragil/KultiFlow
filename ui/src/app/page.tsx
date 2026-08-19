@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ScanLine, Grid, Truck, TrendingUp, Leaf } from "lucide-react";
+import { ScanLine, Grid, Truck, TrendingUp } from "lucide-react";
 import GradientWaves from "@/components/GradientWaves";
 
 export default function LandingPage() {
@@ -10,23 +10,15 @@ export default function LandingPage() {
       {/* HEADER NAVBAR */}
       <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Logo "Stakeholder" */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-[#86CA7F] flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
-              <Leaf className="w-5 h-5 fill-white/20" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-2xl tracking-tight text-[#1F2937]">
-                Stakeholder
-              </span>
-            </div>
-          </Link>
+          <div className="flex items-center gap-2">
+            <img src="/kultiflow-logo.png" alt="KultiFlow Logo" className="h-6 object-contain" />
+          </div>
 
           {/* Nav Right Buttons */}
           <div className="flex items-center gap-4">
             {/* Login as Admin (Routes to /admin/qc) */}
             <Link
-              href="/admin/qc"
+              href="/admin/dashboard"
               className="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-semibold text-[#1F2937] hover:bg-gray-50 transition-colors shadow-xs"
             >
               Login as Admin
@@ -199,12 +191,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Footer Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#86CA7F] flex items-center justify-center text-white">
-              <Leaf className="w-4 h-4" />
-            </div>
-            <span className="font-extrabold text-xl tracking-tight text-[#1F2937]">
-              Stakeholder
-            </span>
+            <img src="/kultiflow-logo.png" alt="KultiFlow Logo" className="h-6 object-contain" />
           </div>
 
           {/* Footer Nav Links */}
@@ -225,7 +212,7 @@ export default function LandingPage() {
 
           {/* Copyright */}
           <div className="text-sm text-gray-500 font-normal">
-            © 2026 Stakeholder. All rights reserved.
+            © 2026 KultiFlow. All rights reserved.
           </div>
         </div>
       </footer>
