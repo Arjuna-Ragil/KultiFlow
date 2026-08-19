@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FileText, LayoutDashboard, Route, Scan, TrendingUp } from "lucide-react";
+import { FileText, LayoutDashboard, Route, Scan, TrendingUp, Leaf, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 type NavItem = "dashboard" | "qc" | "route" | "forecasting" | "invoices";

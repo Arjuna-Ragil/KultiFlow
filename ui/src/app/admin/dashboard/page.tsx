@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Scan, Route, TrendingUp, FileText, ArrowRight } from "lucide-react";
 
-export default function AdminDashboardPage() {
+export default function Page() {
   const modules = [
     {
       title: "Quality Control (QC)",
-      description: "Live AI camera feed for automated produce inspection and freshness sorting.",
+      description: "Live AI camera feed for automated produce inspection and sorting.",
       icon: Scan,
       href: "/admin/qc",
       color: "bg-[#71C168]/10 text-[#71C168]",
@@ -13,7 +13,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: "Route Optimization",
-      description: "Manage logistics and delivery routes for maximum efficiency and cold-chain safety.",
+      description: "Manage logistics and delivery routes for maximum efficiency.",
       icon: Route,
       href: "/admin/route",
       color: "bg-[#71C168]/10 text-[#71C168]",
@@ -21,7 +21,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: "Forecasting",
-      description: "Predictive analytics for seasonal demand and supply chain warehouse planning.",
+      description: "Predictive analytics for demand and supply chain planning.",
       icon: TrendingUp,
       href: "#",
       color: "bg-gray-100 text-gray-400",
@@ -29,7 +29,7 @@ export default function AdminDashboardPage() {
     },
     {
       title: "Invoices",
-      description: "Automated billing, invoices, and financial reporting for stakeholders.",
+      description: "Billing, invoices, and financial reporting for stakeholders.",
       icon: FileText,
       href: "#",
       color: "bg-gray-100 text-gray-400",
@@ -39,12 +39,12 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-full bg-gray-50">
-      <div className="mx-auto w-full max-w-7xl p-6 sm:p-8 space-y-8">
+      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 pt-2 pb-8 space-y-6">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
             Admin Dashboard
           </h1>
-          <p className="mt-1.5 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-gray-500">
             Welcome to the KultiFlow Workspace hub. Select a module below to get started.
           </p>
         </div>

@@ -1,6 +1,5 @@
-import { Camera, CheckCircle2, Info } from "lucide-react";
+import { Camera } from "lucide-react";
 import type { RefObject } from "react";
-import type { BoundingBox } from "./types";
 
 interface CameraPanelProps {
   isCameraActive: boolean;
@@ -13,7 +12,7 @@ interface CameraPanelProps {
   onStopScan: () => void;
   videoRef: RefObject<HTMLVideoElement | null>;
   canvasRef: RefObject<HTMLCanvasElement | null>;
-  boundingBoxes: BoundingBox[];
+  currentResult: { label: string; confidence: number } | null;
 }
 
 export function CameraPanel({
@@ -27,7 +26,7 @@ export function CameraPanel({
   onStopScan,
   videoRef,
   canvasRef,
-  boundingBoxes,
+  currentResult,
 }: CameraPanelProps) {
   const formatTime = (totalSecs: number) => {
     const hrs = Math.floor(totalSecs / 3600);
@@ -110,37 +109,24 @@ export function CameraPanel({
             />
             <canvas ref={canvasRef} className="hidden" />
 
-            {boundingBoxes.map((box) => (
-              <div
-                key={box.id}
-                style={{
-                  left: `${box.x}%`,
-                  top: `${box.y}%`,
-                  width: `${box.width}%`,
-                  height: `${box.height}%`,
-                }}
-                className={`pointer-events-none absolute flex flex-col justify-between rounded-xl border-4 p-2 transition-all duration-300 ${
-                  box.type === "fresh"
-                    ? "border-[#71C168] bg-[#71C168]/15 shadow-[0_0_18px_rgba(113,193,104,0.4)]"
-                    : "border-dashed border-[#DC2626] bg-[#DC2626]/15 shadow-[0_0_18px_rgba(220,38,38,0.4)]"
-                }`}
-              >
-                <div className="self-start">
-                  <span
-                    className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-black text-white shadow-md ${
-                      box.type === "fresh" ? "bg-[#71C168]" : "bg-[#DC2626]"
-                    }`}
-                  >
-                    {box.type === "fresh" ? (
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-                    ) : (
-                      <Info className="h-3.5 w-3.5 shrink-0" />
-                    )}
-                    {box.name}
-                  </span>
+            {currentResult && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm">
+                <div className={`p-4 rounded-2xl backdrop-blur-xl border flex items-center justify-between shadow-2xl transition-all duration-300 ${
+                  currentResult.label.toLowerCase() === 'fresh' 
+                    ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-100' 
+                    : 'bg-rose-500/20 border-rose-500/50 text-rose-100'
+                }`}>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium opacity-80 uppercase tracking-wider">Status</span>
+                    <span className="text-2xl font-bold capitalize">{currentResult.label}</span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm font-medium opacity-80 uppercase tracking-wider">Confidence</span>
+                    <span className="text-xl font-semibold">{(currentResult.confidence * 100).toFixed(1)}%</span>
+                  </div>
                 </div>
               </div>
-            ))}
+            )}
 
             <div className="absolute left-0 right-0 top-0 h-1 bg-[#71C168] shadow-[0_0_14px_#71C168] animate-scanline" />
           </div>

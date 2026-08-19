@@ -1,14 +1,7 @@
-"use client";
+import { useState, useRef, useEffect } from "react";
+import type { BoundingBox, QCScanHistory, RecentDetection } from "../components/types";
 
-import { useEffect, useRef, useState } from "react";
-import { BatchStatsCard } from "./BatchStatsCard";
-import { CameraPanel } from "./CameraPanel";
-import { FreshnessOverviewCard } from "./FreshnessOverviewCard";
-import { RecentDetectionsCard } from "./RecentDetectionsCard";
-import { RecentScansTable } from "./RecentScansTable";
-import type { BoundingBox, QCScanHistory, RecentDetection } from "./types";
-
-export function QCPageContent() {
+export function useQCLogic() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -19,8 +12,10 @@ export function QCPageContent() {
   const [batchPassCount, setBatchPassCount] = useState(0);
   const [batchDefectCount, setBatchDefectCount] = useState(0);
 
+  const [currentResult, setCurrentResult] = useState<{ label: string; confidence: number } | null>(null);
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
   const [recentDetections, setRecentDetections] = useState<RecentDetection[]>([]);
+
   const [qcHistory, setQcHistory] = useState<QCScanHistory[]>([]);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -68,7 +63,11 @@ export function QCPageContent() {
       clearInterval(scanIntervalRef.current);
     }
 
+    let isRequestPending = false;
+
     scanIntervalRef.current = setInterval(async () => {
+      if (isRequestPending) return;
+
       let isFreshResult = true;
       let confidenceScore = 92;
 
@@ -95,29 +94,40 @@ export function QCPageContent() {
               const formData = new FormData();
               formData.append("file", blob, "frame.jpg");
 
-              const response = await fetch("/api/inspection/inspect", {
+              isRequestPending = true;
+              const response = await fetch("http://localhost:8000/api/inspection/inspect", {
                 method: "POST",
                 body: formData,
               });
 
               if (response.ok) {
                 const data = await response.json();
-                if (data.label) {
+                if (data.label && data.label.toLowerCase() !== "none") {
                   isFreshResult = data.label.toLowerCase() === "fresh";
                   confidenceScore = Math.round((data.confidence || 0.9) * 100);
+
+                  setCurrentResult({
+                    label: isFreshResult ? "Fresh" : "Defect",
+                    confidence: confidenceScore / 100,
+                  });
+
+                  updateDetections(isFreshResult ? "Fresh" : "Defect", confidenceScore, selectedFruit);
+                } else if (data.label && data.label.toLowerCase() === "none") {
+                  setCurrentResult(null);
                 }
+              } else {
+                console.error("Server returned an error", response.status);
+                setCurrentResult(null);
               }
             }
           } catch (error) {
-            console.error("API inspection call failed, using model standard fallback", error);
+            console.error("API inspection call failed", error);
+            setCurrentResult(null);
+          } finally {
+            isRequestPending = false;
           }
         }
-      } else {
-        isFreshResult = Math.random() > 0.3;
-        confidenceScore = Math.floor(85 + Math.random() * 14);
       }
-
-      updateDetections(isFreshResult ? "Fresh" : "Defect", confidenceScore, selectedFruit);
     }, 1800);
   };
 
@@ -129,55 +139,13 @@ export function QCPageContent() {
     const fruitParts = fruitFullName.split(" ");
     const fruitName = fruitParts[0] || "Fruit";
 
-    const mainBoxX = 25 + Math.floor(Math.random() * 12);
-    const mainBoxY = 20 + Math.floor(Math.random() * 15);
-    const boxes: BoundingBox[] = [
-      {
-        id: `box-${Date.now()}-1`,
-        name: `${fruitName} - ${status} (${confidence}%)`,
-        type: status === "Fresh" ? "fresh" : "defect",
-        confidence,
-        x: mainBoxX,
-        y: mainBoxY,
-        width: 32 + Math.floor(Math.random() * 8),
-        height: 44 + Math.floor(Math.random() * 10),
-      },
-    ];
-
-    if (Math.random() > 0.45) {
-      const secFresh = Math.random() > 0.35;
-      const secConf = Math.floor(82 + Math.random() * 16);
-      boxes.push({
-        id: `box-${Date.now()}-2`,
-        name: `${fruitName} - ${secFresh ? "Fresh" : "Defect"} (${secConf}%)`,
-        type: secFresh ? "fresh" : "defect",
-        confidence: secConf,
-        x: Math.min(65, mainBoxX + 28),
-        y: Math.min(50, mainBoxY + 8),
-        width: 28 + Math.floor(Math.random() * 6),
-        height: 40 + Math.floor(Math.random() * 8),
-      });
-    }
-
-    setBoundingBoxes(boxes);
-
-    setBatchScannedCount((prev) => prev + boxes.length);
+    setBatchScannedCount((prev) => prev + 1);
     let defectsAdded = 0;
-    boxes.forEach((box) => {
-      if (box.type === "fresh") {
-        setBatchPassCount((prev) => prev + 1);
-      } else {
-        setBatchDefectCount((prev) => prev + 1);
-        defectsAdded += 1;
-      }
-    });
-
-    if (defectsAdded > 0 && Math.random() > 0.5) {
-      addNotification(
-        "Defect Detected",
-        `${defectsAdded} defective item(s) flagged in ${fruitFullName} scan.`,
-        "warning"
-      );
+    if (status === "Fresh") {
+      setBatchPassCount((prev) => prev + 1);
+    } else {
+      setBatchDefectCount((prev) => prev + 1);
+      defectsAdded += 1;
     }
 
     const newDet: RecentDetection = {
@@ -200,13 +168,17 @@ export function QCPageContent() {
     setCameraError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: { facingMode: "environment" },
       });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        void videoRef.current.play();
-      }
       setIsCameraActive(true);
+
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          void videoRef.current.play();
+        }
+      }, 50);
+
       setIsScanning(true);
       setSeconds(0);
       setBatchScannedCount(0);
@@ -215,14 +187,9 @@ export function QCPageContent() {
       startFrameInspection();
     } catch (error) {
       console.warn("Webcam access error:", error);
-      setCameraError("Camera stream active. Point produce at camera for AI detection.");
-      setIsCameraActive(true);
-      setIsScanning(true);
-      setSeconds(0);
-      setBatchScannedCount(0);
-      setBatchPassCount(0);
-      setBatchDefectCount(0);
-      startFrameInspection();
+      setCameraError("Failed to access camera. Please ensure permissions are granted.");
+      setIsCameraActive(false);
+      setIsScanning(false);
     }
   };
 
@@ -291,7 +258,7 @@ export function QCPageContent() {
 
     setIsScanning(false);
     setIsCameraActive(false);
-    setBoundingBoxes([]);
+    setCurrentResult(null);
   };
 
   const livePassRate =
@@ -299,65 +266,22 @@ export function QCPageContent() {
       ? Math.round((batchPassCount / batchScannedCount) * 100)
       : 0;
 
-  return (
-    <div className="min-h-full bg-gray-50">
-      <div className="mx-auto w-full max-w-7xl space-y-8 p-6 sm:p-8">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
-              AI Quality Control
-            </h1>
-            <p className="mt-1.5 text-sm text-gray-500">
-              Live camera feed for automated produce scan & inspection.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-          <CameraPanel
-            isCameraActive={isCameraActive}
-            isScanning={isScanning}
-            seconds={seconds}
-            cameraError={cameraError}
-            selectedFruit={selectedFruit}
-            onFruitChange={setSelectedFruit}
-            onStartScan={startBatchScan}
-            onStopScan={stopBatchScan}
-            videoRef={videoRef}
-            canvasRef={canvasRef}
-            boundingBoxes={boundingBoxes}
-          />
-
-          <div className="space-y-6 lg:col-span-4">
-            <BatchStatsCard
-              isScanning={isScanning}
-              batchScannedCount={batchScannedCount}
-              livePassRate={livePassRate}
-            />
-            <RecentDetectionsCard recentDetections={recentDetections} />
-          </div>
-        </div>
-
-        <div className="space-y-8 pt-2">
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-            <div className="flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-xs lg:col-span-4">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                  TOTAL SCANS (TODAY)
-                </span>
-                <div className="mt-2 text-4xl font-black text-[#1F2937]">{qcHistory.length}</div>
-              </div>
-              <div className="mt-4 flex items-center gap-1 text-xs font-semibold text-gray-400">
-                <span>{qcHistory.length > 0 ? `↑ ${qcHistory.length} scan(s) recorded` : "0 scans completed today"}</span>
-              </div>
-            </div>
-
-            <FreshnessOverviewCard qcHistory={qcHistory} />
-          </div>
-
-          <RecentScansTable qcHistory={qcHistory} />
-        </div>
-      </div>
-    </div>
-  );
+  return {
+    isCameraActive,
+    isScanning,
+    seconds,
+    cameraError,
+    selectedFruit,
+    setSelectedFruit,
+    batchScannedCount,
+    livePassRate,
+    currentResult,
+    boundingBoxes,
+    recentDetections,
+    qcHistory,
+    videoRef,
+    canvasRef,
+    startBatchScan,
+    stopBatchScan,
+  };
 }

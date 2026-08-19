@@ -10,7 +10,6 @@ function RouterSync() {
   const location = useLocation();
 
   useEffect(() => {
-    // Keep window location path in sync
     if (typeof window !== "undefined") {
       const path = window.location.pathname;
       if (path !== location.pathname) {

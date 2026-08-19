@@ -7,24 +7,19 @@ import GradientWaves from "@/components/GradientWaves";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#F9FAFB] text-[#1F2937] flex flex-col font-sans">
-      {/* HEADER NAVBAR */}
       <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="/kultiflow-logo.png" alt="KultiFlow Logo" className="h-6 object-contain" />
           </div>
 
-          {/* Nav Right Buttons */}
           <div className="flex items-center gap-4">
-            {/* Login as Admin (Routes to /admin/qc) */}
             <Link
               href="/admin/dashboard"
               className="px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-semibold text-[#1F2937] hover:bg-gray-50 transition-colors shadow-xs"
             >
               Login as Admin
             </Link>
-
-            {/* Login as Customer (Disabled solid green button) */}
             <button
               disabled
               aria-disabled="true"
@@ -37,9 +32,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-[#F5F5F5] border-b border-gray-200 py-16 md:py-24 min-h-[600px] flex items-center">
-        {/* React Bits GradientWaves in background of Main 1 area */}
+      <section className="relative overflow-hidden bg-[#F5F5F5] border-b border-gray-200 py-16 md:py-24 min-h-150 flex items-center">
         <div className="absolute inset-0 z-0 w-full h-full">
           <GradientWaves
             horizonColor="#84CC16"
@@ -68,7 +61,6 @@ export default function LandingPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pointer-events-none">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pointer-events-auto">
-            {/* Left Content */}
             <div className="lg:col-span-6 space-y-6">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#1F2937] leading-tight tracking-tight">
                 Freshness Meets{" "}
@@ -90,15 +82,13 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Side: Fresh Produce Image Container */}
             <div className="lg:col-span-6 relative flex justify-center items-center">
-              <div className="w-full max-h-[500px] overflow-hidden rounded-2xl flex items-center justify-center shadow-xl border border-gray-100 bg-gray-50/80 backdrop-blur-xs p-2">
+              <div className="w-full max-h-125 overflow-hidden rounded-2xl flex items-center justify-center shadow-xl border border-gray-100 bg-gray-50/80 backdrop-blur-xs p-2">
                 <img
                   src="/floating_fruits.png"
                   alt="Fresh fruits produce warehouse"
-                  className="w-full h-[440px] object-cover rounded-xl shadow-md border border-white/60"
+                  className="w-full h-110 object-cover rounded-xl shadow-md border border-white/60"
                   onError={(e) => {
-                    // Fallback SVG if network is restricted
                     (e.currentTarget as HTMLImageElement).src =
                       "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'><rect width='100%' height='100%' fill='%23E5E7EB'/><text x='50%' y='50%' fill='%2371C168' font-size='28' font-family='Roboto' font-weight='bold' text-anchor='middle'>Fresh Fruit Warehouse & Market</text></svg>";
                   }}
@@ -109,10 +99,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FEATURES SECTION */}
       <section className="py-20 bg-[#F9FAFB] flex-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1F2937] tracking-tight">
               The Future of Freshness Management
@@ -124,9 +112,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* 2x2 Feature Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Card 1 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
               <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <ScanLine className="w-7 h-7" />
@@ -141,7 +127,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Card 2 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
               <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <Grid className="w-7 h-7" />
@@ -155,7 +140,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Card 3 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
               <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <Truck className="w-7 h-7" />
@@ -169,7 +153,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Card 4 */}
             <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-xs hover:shadow-md transition-shadow flex flex-col items-start gap-4 group">
               <div className="p-3.5 rounded-xl bg-[#86CA7F]/10 text-[#86CA7F] group-hover:bg-[#86CA7F] group-hover:text-white transition-colors">
                 <TrendingUp className="w-7 h-7" />
@@ -186,15 +169,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="bg-white border-t border-gray-200 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Footer Logo */}
           <div className="flex items-center gap-2">
             <img src="/kultiflow-logo.png" alt="KultiFlow Logo" className="h-6 object-contain" />
           </div>
 
-          {/* Footer Nav Links */}
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 font-medium">
             <a href="#" className="hover:text-[#86CA7F] transition-colors">
               Privacy Policy
@@ -210,7 +190,6 @@ export default function LandingPage() {
             </a>
           </div>
 
-          {/* Copyright */}
           <div className="text-sm text-gray-500 font-normal">
             © 2026 KultiFlow. All rights reserved.
           </div>
