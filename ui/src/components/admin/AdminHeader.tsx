@@ -2,8 +2,16 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, LogOut, X, CheckCircle2, Route, Sparkles, ShieldAlert } from "lucide-react";
-import type { NotificationItem } from "./types";
+import { Bell, LogOut, X, CheckCircle2, Sparkles, ShieldAlert } from "lucide-react";
+
+export interface NotificationItem {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  type: "success" | "warning" | "info";
+}
 
 interface AdminHeaderProps {
   notifications: NotificationItem[];
