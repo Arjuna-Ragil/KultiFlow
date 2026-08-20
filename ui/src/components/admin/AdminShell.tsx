@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { AdminHeader } from "./AdminHeader";
-import { AdminSidebar } from "./AdminSidebar";
+import { AdminSidebar } from "@/app/admin/components/AdminSidebar";
 import type { NotificationItem } from "./types";
 
 interface AdminShellProps {

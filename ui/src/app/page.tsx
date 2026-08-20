@@ -20,14 +20,12 @@ export default function LandingPage() {
             >
               Login as Admin
             </Link>
-            <button
-              disabled
-              aria-disabled="true"
-              className="px-5 py-2.5 rounded-lg bg-[#86CA7F] text-white text-sm font-semibold cursor-not-allowed opacity-85 shadow-xs flex items-center gap-1.5"
-              title="Customer Login temporarily disabled"
+            <Link
+              href="/customer/negotiator"
+              className="px-5 py-2.5 rounded-lg bg-[#71C168] hover:bg-[#60ab58] text-white text-sm font-semibold transition-colors shadow-xs"
             >
               Login as Customer
-            </button>
+            </Link>
           </div>
         </div>
       </header>
