@@ -56,7 +56,9 @@ def solve_logistics(lokasi_list, num_vehicles, vehicle_capacities):
     #Toko yang urgency-nya tinggi memiliki denda yang sangat mahal, sehingga akan diprioritaskan.
     penalty_base = 10000
     for node in range(1, len(lokasi_list)):
-        urgency = lokasi_list[node].get('urgency', 0.0)
+        urgency = lokasi_list[node].get('urgency')
+        if urgency is None:
+            urgency = 0.0
         # Urgency 1.0 (sangat mendesak) akan memiliki penalty = 60000
         # Urgency 0.0 (santai) akan memiliki penalty = 10000
         penalty_score = int(penalty_base + (urgency * 50000))

@@ -1,10 +1,20 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
 import joblib
 
 # 1. Inisialisasi Aplikasi API dan Load Model
 app = FastAPI(title="Smart Commerce: Sales & Demand Forecasting API")
+pipeline = joblib.load('forecasting_pipeline.pkl')
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 pipeline = joblib.load('forecasting_pipeline.pkl')
 
 # 2. Definisikan Format Data yang Diterima (Validasi Input)

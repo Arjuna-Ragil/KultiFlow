@@ -1,0 +1,18 @@
+# Gunakan Python versi ringan agar proses build cepat
+FROM python:3.10-slim
+
+# Tentukan direktori kerja di dalam container
+WORKDIR /app
+
+# Pindahkan file requirements dan install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Pindahkan seluruh kode dan dataset (termasuk dummy_orders.csv)
+COPY . .
+
+# Beri tahu Docker bahwa aplikasi ini berjalan di port 8002
+EXPOSE 8002
+
+# Perintah untuk menjalankan server FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
