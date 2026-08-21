@@ -27,7 +27,7 @@ app = FastAPI(title="Smart Logistics API", version="2.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],  # Your frontend URLs
+    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"],  # Your frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -57,6 +57,8 @@ def optimize_logistics_route(payload: RouteRequest):
             vehicle_capacities=payload.vehicle_capacities
         )
 
+        print(f"[DEBUG] OR-Tools selesai dengan status: {hasil.get('status')}")
+
         if hasil.get("status") == "Gagal":
             raise HTTPException(status_code=400, detail=hasil.get("pesan"))
 
@@ -70,9 +72,12 @@ def optimize_logistics_route(payload: RouteRequest):
         """
         
         try:
+            print("[DEBUG] Memanggil Gemini AI...")
             response_ai = ai_agent.generate_content(prompt)
             hasil["pesan_dispatcher_ai"] = response_ai.text
+            print("[DEBUG] Selesai memanggil Gemini AI.")
         except Exception as e:
+            print(f"[ERROR] Gemini Error: {str(e)}")
             hasil["pesan_dispatcher_ai"] = f"Catatan AI Error: {str(e)}"
 
         return hasil
