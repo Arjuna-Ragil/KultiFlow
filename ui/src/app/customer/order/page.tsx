@@ -230,13 +230,24 @@ function OrderFormContent() {
     setIsProcessing(true);
 
     try {
-      const res = await fetch("/api/validate-order", {
+      const res = await fetch("http://localhost:8000/api/anomaly/check-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          totalWeightKg,
           companyName,
-          items: orderLines,
+          contactPerson,
+          emailAddress,
+          phoneNumber,
+          deliveryMethod,
+          deliveryAddress: deliveryAddress || "Main Corporate Warehouse / HQ Address",
+          totalWeightKg,
+          totalAmount,
+          shippingFee: shippingCost,
+          items: orderLines.map((i) => ({
+            name: i.name,
+            quantity: i.quantity,
+            price: i.price,
+          })),
         }),
       });
 
@@ -247,44 +258,15 @@ function OrderFormContent() {
         setIsProcessing(false);
         return;
       }
+      
+      // Order successfully verified and saved to Postgres!
+      setConfirmedOrderId(data.order_number || `#ORD-${Math.floor(1000 + Math.random() * 9000)}`);
+      
     } catch (error) {
-      showToast("Failed to connect to AI validation service.");
+      console.error(error);
+      showToast("Failed to connect to Python backend service on port 8000.");
       setIsProcessing(false);
       return;
-    }
-
-    const newOrderId = `#ORD-${Math.floor(1000 + Math.random() * 9000)}`;
-    setConfirmedOrderId(newOrderId);
-
-    if (typeof window !== "undefined") {
-      const newOrder = {
-        id: `ord-${Date.now()}`,
-        orderNumber: newOrderId,
-        date: new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }),
-        status: "Processing",
-        totalAmount,
-        deliveryMethod,
-        deliveryAddress: deliveryAddress || "Main Corporate Warehouse / HQ Address",
-        companyName,
-        contactPerson,
-        emailAddress,
-        phoneNumber,
-        shippingFee: shippingCost,
-        items: orderLines.map((i) => ({
-          id: i.id,
-          name: i.name,
-          quantity: i.quantity,
-          unit: i.unit,
-          price: i.price,
-          image: i.image,
-        })),
-      };
-      const existing = JSON.parse(localStorage.getItem("kf_placed_orders") || "[]");
-      localStorage.setItem("kf_placed_orders", JSON.stringify([newOrder, ...existing]));
     }
 
     if (!isBuyNowMode) {

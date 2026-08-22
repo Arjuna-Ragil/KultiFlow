@@ -167,42 +167,48 @@ export default function InvoicesPage() {
   const [isPreviewVisible, setIsPreviewVisible] = useState(true);
 
   useEffect(() => {
-    const savedOrders = JSON.parse(localStorage.getItem("kf_placed_orders") || "[]");
-    const formattedOrders: InvoiceData[] = savedOrders.map((order: any) => ({
-      invoiceNumber: order.orderNumber,
-      issueDate: order.date,
-      dueDate: order.date,
-      stage: "order",
-      status: "Pending",
-      customer: {
-        name: order.companyName || "Guest Company",
-        address: order.deliveryAddress,
-        cityPostal: "-",
-        email: order.emailAddress || "guest@example.com",
-        phone: order.phoneNumber || "-",
-      },
-      seller: {
-        companyName: "FruitMarket KultiFlow",
-        address: "Jl. Buah Segar No. 123",
-        cityPostal: "Jakarta Selatan, 12345",
-        email: "admin@kultiflow.co.id",
-      },
-      shippingFee: order.shippingFee || 1200000,
-      items: order.items.map((item: any) => ({
-        id: item.id || `item-${Math.random()}`,
-        name: item.name,
-        qtyKg: item.quantity,
-        pricePerKg: item.price,
-        image: item.image,
-      })),
-    }));
+    fetch("http://localhost:8000/api/anomaly/invoices")
+      .then((res) => res.json())
+      .then((savedOrders) => {
+        if (!Array.isArray(savedOrders)) return;
+        
+        const formattedOrders: InvoiceData[] = savedOrders.map((order: any) => ({
+          invoiceNumber: order.orderNumber,
+          issueDate: order.date,
+          dueDate: order.date,
+          stage: "order",
+          status: "Pending",
+          customer: {
+            name: order.companyName || "Guest Company",
+            address: order.deliveryAddress,
+            cityPostal: "-",
+            email: order.emailAddress || "guest@example.com",
+            phone: order.phoneNumber || "-",
+          },
+          seller: {
+            companyName: "FruitMarket KultiFlow",
+            address: "Jl. Buah Segar No. 123",
+            cityPostal: "Jakarta Selatan, 12345",
+            email: "admin@kultiflow.co.id",
+          },
+          shippingFee: order.shippingFee || 1200000,
+          items: order.items.map((item: any) => ({
+            id: item.id || `item-${Math.random()}`,
+            name: item.name,
+            qtyKg: item.quantity || item.qtyKg || 1, // Fallback for diff payload structures
+            pricePerKg: item.price || item.pricePerKg || 0,
+            image: item.image || "",
+          })),
+        }));
 
-    setInvoices((prev) => {
-      const newInvoices = formattedOrders.filter(
-        (fo) => !prev.some((p) => p.invoiceNumber === fo.invoiceNumber)
-      );
-      return [...newInvoices, ...prev];
-    });
+        setInvoices((prev) => {
+          const newInvoices = formattedOrders.filter(
+            (fo) => !prev.some((p) => p.invoiceNumber === fo.invoiceNumber)
+          );
+          return [...newInvoices, ...prev];
+        });
+      })
+      .catch((err) => console.error("Failed to fetch invoices", err));
   }, []);
 
   const currentInvoice = invoices[selectedInvoiceIndex] || invoices[0];

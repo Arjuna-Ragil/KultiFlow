@@ -254,6 +254,18 @@ export function useQCLogic() {
         `Batch ${scanId} finished: ${totalItems} items scanned (${passItems} Fresh, ${defectItems} Reject).`,
         isOverallFresh ? "success" : "warning"
       );
+
+      // Save pass_rate to the backend Quality table
+      const payload = {
+        fruit_type: fruitType + (fruitSubtype ? " " + fruitSubtype : ""),
+        pass_rate: (passRate / 100).toFixed(2),
+      };
+      
+      fetch("http://localhost:8000/api/inspection/save-batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).catch(err => console.error("Failed to save QC batch result", err));
     }
 
     setIsScanning(false);

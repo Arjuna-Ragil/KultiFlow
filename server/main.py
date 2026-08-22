@@ -7,7 +7,20 @@ from api.nego import router as nego_router
 from api.anomaly import router as anomaly_router
 from api.sales import router as sales_router
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+from config.database import Base, engine
+from models.invoice import Invoice
+from models.warehouse import Warehouse
+from models.quality import FruitQuality
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create database tables
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

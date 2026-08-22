@@ -110,14 +110,16 @@ export default function CustomerOrdersPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("kf_placed_orders");
-      if (saved) {
-        try {
-          setDynamicOrders(JSON.parse(saved));
-        } catch {
-          // fallback
-        }
-      }
+      fetch("http://localhost:8000/api/anomaly/invoices")
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setDynamicOrders(data);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to fetch orders from Postgres API", err);
+        });
     }
   }, []);
 
