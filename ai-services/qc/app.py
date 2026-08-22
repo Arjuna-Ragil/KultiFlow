@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.efficientnet import preprocess_input
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 import io
 
 app = FastAPI()
@@ -25,23 +25,23 @@ def root():
 
 def _run_prediction(contents: bytes) -> dict:
     try:
-        img = Image.open(io.BytesIO(contents)).resize((224, 224)).convert("RGB")
+        img_real = Image.open(io.BytesIO(contents))
+        img_mulus = img_real.filter(ImageFilter.GaussianBlur(radius=3))
+        img = img_mulus.resize((224, 224))
     except Exception:
         raise ValueError("Invalid image file")
 
     img_array = np.expand_dims(np.array(img), axis=0)
-    
-    # If the image is largely uniform (e.g. blank background), skip prediction
-    if np.std(img_array) < 15.0:
-        return {"label": "none", "confidence": 0.0}
+    if np.mean(img_array) < 40.0 or np.std(img_array) < 15.0:
+        return {"label": "none", "confidence": 0.0, "urgency_score": 0.0}
 
     img_array = preprocess_input(img_array)
 
     pred = float(model.predict(img_array, verbose=0)[0][0])
-    label = "rotten" if pred > 0.5 else "fresh"
+    label = "rotten" if pred > 0.85 else "fresh"
     confidence = pred if label == "rotten" else 1 - pred
 
-    return {"label": label, "confidence": round(confidence, 4)}
+    return {"label": label, "confidence": round(confidence, 4), "urgency_score": round(pred, 4)}
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):

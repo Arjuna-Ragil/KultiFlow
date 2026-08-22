@@ -130,7 +130,9 @@ export function CameraPanel({
                 <div className={`p-4 rounded-2xl backdrop-blur-xl border flex items-center justify-between shadow-2xl transition-all duration-300 ${
                   currentResult.label.toLowerCase() === 'fresh' 
                     ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-100' 
-                    : 'bg-rose-500/20 border-rose-500/50 text-rose-100'
+                    : currentResult.label.toLowerCase() === 'none'
+                      ? 'bg-gray-500/50 border-gray-500/50 text-gray-100'
+                      : 'bg-rose-500/20 border-rose-500/50 text-rose-100'
                 }`}>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium opacity-80 uppercase tracking-wider">Status</span>
