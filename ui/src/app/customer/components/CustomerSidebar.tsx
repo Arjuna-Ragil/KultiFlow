@@ -19,15 +19,18 @@ export function CustomerSidebar() {
           <img src="/kultiflow-logo.png" alt="KultiFlow Logo" className="h-6 object-contain" />
         </div>
         <nav className="space-y-1.5 p-4">
-          {/* Dashboard (Disabled / Unavailable) */}
-          <button
-            disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60 cursor-not-allowed"
-            title="Dashboard temporarily unavailable for customer"
+          {/* Dashboard (Active Link) */}
+          <Link
+            href="/customer/dashboard"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "dashboard"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
           >
             <LayoutDashboard className="h-5 w-5" />
             <span>Dashboard</span>
-          </button>
+          </Link>
 
           {/* Product List (Disabled / Unavailable) */}
           <button
