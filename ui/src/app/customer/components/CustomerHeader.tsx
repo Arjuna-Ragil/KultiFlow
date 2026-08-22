@@ -76,8 +76,8 @@ export function CustomerHeader({
         >
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white ring-2 ring-white">
-              {totalItems}
+            <span className="absolute -top-1.5 -right-1.5 flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white ring-2 ring-white shadow-xs leading-none">
+              {totalItems > 99 ? "99+" : totalItems}
             </span>
           )}
         </button>
@@ -92,8 +92,8 @@ export function CustomerHeader({
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white ring-2 ring-white">
-                {unreadCount}
+              <span className="absolute -top-1.5 -right-1.5 flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white ring-2 ring-white shadow-xs leading-none">
+                {unreadCount > 99 ? "99+" : unreadCount}
               </span>
             )}
           </button>

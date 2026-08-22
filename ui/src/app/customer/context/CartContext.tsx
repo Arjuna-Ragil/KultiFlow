@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 export interface CartItem {
   id: string;
@@ -20,29 +20,85 @@ interface CartContextType {
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  setItems: React.Dispatch<React.SetStateAction<CartItem[]>>;
+  directOrderItem: CartItem | null;
+  setDirectOrderItem: (item: CartItem | null) => void;
+  startBuyNow: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
+  clearBuyNow: () => void;
   totalItems: number;
   totalPrice: number;
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   toggleCart: () => void;
+  toastMessage: string | null;
+  showToast: (msg: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [directOrderItem, setDirectOrderItemState] = useState<CartItem | null>(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("kf_buy_now_item");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {}
+      }
+    }
+    return null;
+  });
+
+  const setDirectOrderItem = (item: CartItem | null) => {
+    setDirectOrderItemState(item);
+    if (typeof window !== "undefined") {
+      if (item) {
+        sessionStorage.setItem("kf_buy_now_item", JSON.stringify(item));
+      } else {
+        sessionStorage.removeItem("kf_buy_now_item");
+      }
+    }
+  };
+
+  const startBuyNow = (newItem: Omit<CartItem, "quantity">, quantity: number = 1) => {
+    const item: CartItem = { ...newItem, quantity };
+    setDirectOrderItem(item);
+  };
+
+  const clearBuyNow = () => {
+    setDirectOrderItem(null);
+  };
   const [items, setItems] = useState<CartItem[]>([
     {
-      id: "prod-fuji",
-      name: "Fuji Apples",
+      id: "prod-avocado",
+      name: "Organic Hass Avocados",
       price: 45000,
       originalPrice: 45000,
-      quantity: 2,
+      quantity: 500,
       unit: "kg",
-      image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?q=80&w=400&auto=format&fit=crop",
+      image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?q=80&w=400&auto=format&fit=crop",
+      stockStatus: "In Stock",
+    },
+    {
+      id: "prod-strawberry",
+      name: "Premium Strawberries",
+      price: 85000,
+      originalPrice: 85000,
+      quantity: 200,
+      unit: "kg",
+      image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?q=80&w=400&auto=format&fit=crop",
       stockStatus: "In Stock",
     },
   ]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((current) => (current === msg ? null : current));
+    }, 3000);
+  };
 
   const addToCart = (newItem: Omit<CartItem, "quantity">, quantity: number = 1) => {
     setItems((prev) => {
@@ -51,7 +107,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const updated = [...prev];
         updated[existingIndex] = {
           ...updated[existingIndex],
-          price: newItem.price, // update to negotiated price if any
+          price: newItem.price,
           isNegotiated: newItem.isNegotiated ?? updated[existingIndex].isNegotiated,
           quantity: updated[existingIndex].quantity + quantity,
         };
@@ -59,6 +115,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, { ...newItem, quantity }];
     });
+    showToast(`${newItem.name} ditambahkan ke keranjang`);
   };
 
   const removeFromCart = (id: string) => {
@@ -92,11 +149,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        setItems,
+        directOrderItem,
+        setDirectOrderItem,
+        startBuyNow,
+        clearBuyNow,
         totalItems,
         totalPrice,
         isCartOpen,
         setIsCartOpen,
         toggleCart,
+        toastMessage,
+        showToast,
       }}
     >
       {children}
@@ -111,3 +175,4 @@ export function useCart() {
   }
   return context;
 }
+

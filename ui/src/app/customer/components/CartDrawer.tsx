@@ -1,12 +1,22 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { X, Trash2, Plus, Minus, ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
 export function CartDrawer() {
-  const { isCartOpen, setIsCartOpen, items, updateQuantity, removeFromCart, totalPrice, totalItems } =
-    useCart();
+  const router = useRouter();
+  const {
+    isCartOpen,
+    setIsCartOpen,
+    items,
+    updateQuantity,
+    removeFromCart,
+    totalPrice,
+    totalItems,
+    clearBuyNow,
+  } = useCart();
 
   if (!isCartOpen) return null;
 
@@ -16,6 +26,12 @@ export function CartDrawer() {
       currency: "IDR",
       maximumFractionDigits: 0,
     }).format(val);
+  };
+
+  const handleCheckout = () => {
+    clearBuyNow();
+    setIsCartOpen(false);
+    router.push("/customer/order?mode=cart");
   };
 
   return (
@@ -42,7 +58,7 @@ export function CartDrawer() {
             </div>
             <button
               onClick={() => setIsCartOpen(false)}
-              className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+              className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors cursor-pointer"
               title="Close cart"
             >
               <X className="h-5 w-5" />
@@ -82,7 +98,7 @@ export function CartDrawer() {
                       </div>
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                        className="text-gray-400 hover:text-red-500 transition-colors p-1 cursor-pointer"
                         title="Remove item"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -101,7 +117,7 @@ export function CartDrawer() {
                       <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-2 py-1 shadow-2xs">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="text-gray-500 hover:text-[#71C168] transition-colors"
+                          className="text-gray-500 hover:text-[#71C168] transition-colors cursor-pointer"
                         >
                           <Minus className="h-3.5 w-3.5" />
                         </button>
@@ -110,7 +126,7 @@ export function CartDrawer() {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="text-gray-500 hover:text-[#71C168] transition-colors"
+                          className="text-gray-500 hover:text-[#71C168] transition-colors cursor-pointer"
                         >
                           <Plus className="h-3.5 w-3.5" />
                         </button>
@@ -132,7 +148,7 @@ export function CartDrawer() {
                 </div>
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>Estimated Delivery</span>
-                  <span className="text-[#71C168] font-semibold">Free Express</span>
+                  <span className="text-[#71C168] font-semibold">Standard / Express Available</span>
                 </div>
                 <div className="flex justify-between text-base font-black text-[#1F2937] pt-2 border-t border-gray-100">
                   <span>Total</span>
@@ -141,10 +157,10 @@ export function CartDrawer() {
               </div>
 
               <button
-                onClick={() => alert("Checkout flow completed! Your order has been placed.")}
+                onClick={handleCheckout}
                 className="w-full py-3.5 rounded-xl bg-[#71C168] hover:bg-[#60ab58] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Proceed to Checkout</span>
+                <span>Proceed to Form Order</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>

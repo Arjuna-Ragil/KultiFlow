@@ -10,7 +10,12 @@ export function CustomerSidebar() {
 
   const activeItem = currentPath.includes("/negotiator")
     ? "negotiator"
+    : currentPath.includes("/orders")
+    ? "orders"
+    : currentPath.includes("/products") || currentPath.includes("/order")
+    ? "products"
     : "dashboard";
+
 
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col justify-between border-r border-gray-200 bg-white">
@@ -29,15 +34,18 @@ export function CustomerSidebar() {
             <span>Dashboard</span>
           </button>
 
-          {/* Product List (Disabled / Unavailable) */}
-          <button
-            disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60 cursor-not-allowed"
-            title="Product List temporarily unavailable"
+          {/* Product List */}
+          <Link
+            href="/customer/products"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "products"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
           >
             <ShoppingBag className="h-5 w-5" />
             <span>Product List</span>
-          </button>
+          </Link>
 
           {/* AI Negotiator (Active) */}
           <Link
@@ -52,15 +60,18 @@ export function CustomerSidebar() {
             <span>AI Negotiator</span>
           </Link>
 
-          {/* My Orders (Disabled / Unavailable) */}
-          <button
-            disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60 cursor-not-allowed"
-            title="My Orders temporarily unavailable"
+          {/* My Orders */}
+          <Link
+            href="/customer/orders"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "orders"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
           >
             <FileText className="h-5 w-5" />
             <span>My Orders</span>
-          </button>
+          </Link>
         </nav>
       </div>
 
