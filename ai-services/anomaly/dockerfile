@@ -1,18 +1,16 @@
-# Gunakan Python versi ringan agar proses build cepat
-FROM python:3.10-slim
-
-# Tentukan direktori kerja di dalam container
+# Builder Stage
+FROM python:3.10-slim AS builder
 WORKDIR /app
-
-# Pindahkan file requirements dan install
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pindahkan seluruh kode dan dataset (termasuk dummy_orders.csv)
+# Final Stage
+FROM python:3.10-slim
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 COPY . .
-
-# Beri tahu Docker bahwa aplikasi ini berjalan di port 8004
 EXPOSE 8004
-
-# Perintah untuk menjalankan server FastAPI
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8004"]

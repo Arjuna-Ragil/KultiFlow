@@ -1,4 +1,5 @@
 import httpx
+import os
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from schemas.route import RouteRequest
@@ -13,7 +14,8 @@ def get_client() -> httpx.AsyncClient:
 
 class RouteService:
     def __init__(self):
-        self.ai_model_url = "http://127.0.0.1:8002/optimize-route"
+        base_url = os.getenv("ROUTE_SERVICE_URL", "http://127.0.0.1:8002")
+        self.ai_model_url = f"{base_url}/optimize-route"
 
     async def optimize_route(self, data: RouteRequest) -> dict:
         try:

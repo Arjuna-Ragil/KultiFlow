@@ -1,4 +1,5 @@
 import httpx
+import os
 from fastapi import UploadFile, HTTPException
 
 # Persistent client for the lifetime of the application
@@ -12,7 +13,8 @@ def get_client() -> httpx.AsyncClient:
 
 class QualityControlService:
     def __init__(self):
-        self.ai_model_url = "http://127.0.0.1:8001/predict" # Jangan lupa nanti ganti boss
+        base_url = os.getenv("QC_SERVICE_URL", "http://127.0.0.1:8001")
+        self.ai_model_url = f"{base_url}/predict"
 
     async def inspect_image(self, file: UploadFile) -> dict:
         content = await file.read()

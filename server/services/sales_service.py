@@ -1,4 +1,5 @@
 import httpx
+import os
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from schemas.sales import SalesData
@@ -13,7 +14,8 @@ def get_client() -> httpx.AsyncClient:
 
 class SalesService:
     def __init__(self):
-        self.ai_model_url = "http://127.0.0.1:8005/predict"
+        base_url = os.getenv("SALES_SERVICE_URL", "http://127.0.0.1:8005")
+        self.ai_model_url = f"{base_url}/predict"
 
     async def predict_demand(self, data: SalesData) -> dict:
         try:

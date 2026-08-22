@@ -19,6 +19,12 @@ services:
     restart: unless-stopped
     ports:
       - "8000:8000"
+    environment:
+      - QC_SERVICE_URL=http://qc:8001
+      - ROUTE_SERVICE_URL=http://route:8002
+      - NEGO_SERVICE_URL=http://nego:8003
+      - ANOMALY_SERVICE_URL=http://anomaly:8004
+      - SALES_SERVICE_URL=http://sales-demand:8005
     networks:
       - CF26_net
 
@@ -37,6 +43,8 @@ services:
       context: ./ai-services/route
     container_name: CF26_route
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
       - "8002:8002"
     networks:
@@ -47,6 +55,8 @@ services:
       context: ./ai-services/nego
     container_name: CF26_nego
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
       - "8003:8003"
     networks:

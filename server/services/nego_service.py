@@ -1,4 +1,5 @@
 import httpx
+import os
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from schemas.nego import ChatRequest
@@ -13,7 +14,8 @@ def get_client() -> httpx.AsyncClient:
 
 class NegoService:
     def __init__(self):
-        self.ai_model_url = "http://127.0.0.1:8003/negotiate"
+        base_url = os.getenv("NEGO_SERVICE_URL", "http://127.0.0.1:8003")
+        self.ai_model_url = f"{base_url}/negotiate"
 
     async def negotiate(self, data: ChatRequest) -> dict:
         try:

@@ -1,6 +1,7 @@
 import httpx
-from schemas.anomaly import OrderRequest
+import os
 from fastapi.encoders import jsonable_encoder
+from schemas.anomaly import OrderRequest
 
 _client = None
 
@@ -12,7 +13,8 @@ def get_client() -> httpx.AsyncClient:
 
 class AnomalyService:
     def __init__(self):
-        self.ai_model_url = "http://127.0.0.1:8004/check-order"
+        base_url = os.getenv("ANOMALY_SERVICE_URL", "http://127.0.0.1:8004")
+        self.ai_model_url = f"{base_url}/check-order"
 
     async def check_order(self, data: OrderRequest) -> dict:
         try:
