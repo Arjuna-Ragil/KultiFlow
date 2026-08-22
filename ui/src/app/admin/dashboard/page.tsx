@@ -23,9 +23,9 @@ export default function Page() {
       title: "Forecasting",
       description: "Predictive analytics for demand and supply chain planning.",
       icon: TrendingUp,
-      href: "#",
-      color: "bg-gray-100 text-gray-400",
-      disabled: true,
+      href: "/admin/forecasting",
+      color: "bg-[#71C168]/10 text-[#71C168]",
+      disabled: false,
     },
     {
       title: "Invoices",
