@@ -23,6 +23,8 @@ class FrontendOrderRequest(BaseModel):
     phoneNumber: str = ""
     deliveryMethod: str = "Standard Freight"
     deliveryAddress: str = ""
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
     totalWeightKg: float = 0.0
     totalAmount: float = 0.0
     shippingFee: float = 0.0

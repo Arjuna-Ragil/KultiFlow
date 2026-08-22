@@ -18,6 +18,8 @@ class Invoice(Base):
     
     delivery_method = Column(String)
     delivery_address = Column(String)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
     
     company_name = Column(String)
     contact_person = Column(String)

@@ -103,6 +103,8 @@ export function useQCLogic() {
             0, 0, targetSize, targetSize        // Destination (scaled to 224x224)
           );
 
+          console.log(canvas.toDataURL("image/jpeg", 0.8));
+          
           try {
             const blob = await new Promise<Blob | null>((resolve) =>
               canvas.toBlob(resolve, "image/jpeg", 0.8)
@@ -146,7 +148,7 @@ export function useQCLogic() {
           }
         }
       }
-    }, 1800);
+    }, 4000);
   };
 
   const updateDetections = (

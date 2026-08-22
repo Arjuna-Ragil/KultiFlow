@@ -14,6 +14,12 @@ import {
 } from "lucide-react";
 import { useCart, CartItem } from "../context/CartContext";
 import { UNIFIED_PRODUCTS, ProductItem } from "@/lib/products";
+import dynamic from "next/dynamic";
+
+const LocationPickerMap = dynamic(() => import("./components/LocationPickerMap"), {
+  ssr: false,
+  loading: () => <div className="h-64 w-full rounded-xl bg-gray-100 animate-pulse flex items-center justify-center text-gray-400 text-sm font-semibold">Loading Map Engine...</div>
+});
 
 function OrderFormContent() {
   const router = useRouter();
@@ -39,6 +45,8 @@ function OrderFormContent() {
   const [shippingDate, setShippingDate] = useState("");
   const [deliveryMethod, setDeliveryMethod] = useState("Standard Freight (3-5 Days)");
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   const [internalNotes, setInternalNotes] = useState("");
 
   // Search / Add Product state
@@ -240,6 +248,8 @@ function OrderFormContent() {
           phoneNumber,
           deliveryMethod,
           deliveryAddress: deliveryAddress || "Main Corporate Warehouse / HQ Address",
+          latitude,
+          longitude,
           totalWeightKg,
           totalAmount,
           shippingFee: shippingCost,
@@ -427,17 +437,38 @@ function OrderFormContent() {
               </div>
 
               {/* Delivery Address */}
-              <div className="md:col-span-2">
-                <label className="block text-[11px] font-semibold text-gray-500 mb-1">
-                  Delivery Address
-                </label>
-                <textarea
-                  rows={2}
-                  value={deliveryAddress}
-                  onChange={(e) => setDeliveryAddress(e.target.value)}
-                  placeholder="Enter complete warehouse or store address..."
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs sm:text-sm text-[#1F2937] placeholder-gray-400 focus:border-[#71C168] focus:ring-1.5 focus:ring-[#71C168]/20 transition-all outline-none resize-none"
-                />
+              <div className="md:col-span-2 space-y-4">
+                <div>
+                  <label className="block text-[11px] font-semibold text-gray-500 mb-1">
+                    Delivery Address
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    placeholder="Enter complete warehouse or store address..."
+                    className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs sm:text-sm text-[#1F2937] placeholder-gray-400 focus:border-[#71C168] focus:ring-1.5 focus:ring-[#71C168]/20 transition-all outline-none resize-none"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-[11px] font-semibold text-gray-500 mb-2">
+                    Pinpoint Delivery Location (Required for Route Optimization)
+                  </label>
+                  <LocationPickerMap
+                    latitude={latitude}
+                    longitude={longitude}
+                    onLocationSelect={(lat, lng) => {
+                      setLatitude(lat);
+                      setLongitude(lng);
+                    }}
+                  />
+                  {latitude !== null && longitude !== null && (
+                    <p className="mt-2 text-[10px] font-bold text-[#1E7B34]">
+                      Selected coordinates: {latitude.toFixed(6)}, {longitude.toFixed(6)}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

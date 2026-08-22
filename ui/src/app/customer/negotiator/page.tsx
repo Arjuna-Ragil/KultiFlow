@@ -34,20 +34,7 @@ const defaultInitialMessages: ChatMessage[] = [
     sender: "bot",
     text: "Hello! I'm your KultiFlow AI assistant. Looking for something specific, or need wholesale recommendations on today's freshest harvests?",
     timestamp: "10:30 AM",
-  },
-  {
-    id: "m-2",
-    sender: "user",
-    text: "Find me fresh Apples",
-    timestamp: "10:31 AM",
-  },
-  {
-    id: "m-3",
-    sender: "bot",
-    text: "Here are the freshest apples currently in stock from our local orchards:",
-    timestamp: "10:31 AM",
-    showProducts: true,
-  },
+  }
 ];
 
 export default function AINegotiatorPage() {

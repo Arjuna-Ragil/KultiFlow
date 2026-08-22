@@ -9,3 +9,5 @@ class Warehouse(Base):
     location = Column(String)
     current_stock_kg = Column(Float, default=0.0)
     capacity_kg = Column(Float, default=10000.0)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)

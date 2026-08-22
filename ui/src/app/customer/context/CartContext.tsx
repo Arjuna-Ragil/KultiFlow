@@ -68,28 +68,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearBuyNow = () => {
     setDirectOrderItem(null);
   };
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: "hass-avocado",
-      name: "Organic Hass Avocados",
-      price: 45000,
-      originalPrice: 45000,
-      quantity: 500,
-      unit: "kg",
-      image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?q=80&w=400&auto=format&fit=crop",
-      stockStatus: "Low Stock",
-    },
-    {
-      id: "premium-strawberry",
-      name: "Premium Strawberries",
-      price: 85000,
-      originalPrice: 85000,
-      quantity: 200,
-      unit: "kg",
-      image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?q=80&w=400&auto=format&fit=crop",
-      stockStatus: "In Stock",
-    },
-  ]);
+  const [items, setItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 

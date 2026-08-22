@@ -21,34 +21,21 @@ import {
 import { useCart } from "../context/CartContext";
 import { UNIFIED_PRODUCTS, PRODUCT_CATEGORIES, ProductItem } from "@/lib/products";
 
-const FLASH_DEALS = [
-  {
-    id: "deal-1",
-    title: "Bulk Harvest Batch: Fuji Apples",
-    description: "Special wholesale bulk pricing for min. 30kg orders direct from Batu orchards.",
-    negotiatedPrice: 38500,
-    regularPrice: 52000,
-    unit: "/kg",
-    discountPercent: 26,
-    stockLeftKg: 140,
-    image: "/fuji_apples.jpg",
-    tags: ["Grade A+", "Nego Deal Locked", "Cold Chain Ready"],
-    expiresIn: "03:24:15",
-  },
-  {
-    id: "deal-2",
-    title: "Tree-Ripened Harumanis Mango 143",
-    description: "16.5° Brix sweetness index, harvested early today and passed AI QC scanning.",
-    negotiatedPrice: 27000,
-    regularPrice: 38000,
-    unit: "/kg",
-    discountPercent: 29,
-    stockLeftKg: 85,
-    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?q=80&w=400&auto=format&fit=crop",
-    tags: ["Grade A+", "AI QC 99.2%", "Fresh Arrival"],
-    expiresIn: "01:45:00",
-  },
-];
+interface FlashDeal {
+  id: string;
+  title: string;
+  description: string;
+  negotiatedPrice: number;
+  regularPrice: number;
+  unit: string;
+  discountPercent: number;
+  stockLeftKg: number;
+  image: string;
+  tags: string[];
+  expiresIn: string;
+}
+
+const FLASH_DEALS: FlashDeal[] = [];
 
 export default function CustomerDashboardPage() {
   const router = useRouter();

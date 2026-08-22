@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { FormState, ValidationError } from "../types";
 
 interface RouteFormProps {
@@ -8,7 +8,12 @@ interface RouteFormProps {
   loading: boolean;
   errorMsg: string | null;
   totalDemand: number;
+  invoices: any[];
+  warehouses: any[];
+  selectedWarehouseId: number | "";
+  setSelectedWarehouseId: React.Dispatch<React.SetStateAction<number | "">>;
   handleAddDestination: () => void;
+  handleAddDestinationFromInvoice: (id: string) => void;
   handleRemoveDestination: (id: string) => void;
   handleReset: () => void;
   handleSubmit: (e?: React.FormEvent) => Promise<void>;
@@ -21,15 +26,38 @@ export function RouteForm({
   loading,
   errorMsg,
   totalDemand,
+  invoices,
+  warehouses,
+  selectedWarehouseId,
+  setSelectedWarehouseId,
   handleAddDestination,
+  handleAddDestinationFromInvoice,
   handleRemoveDestination,
   handleReset,
   handleSubmit,
 }: RouteFormProps) {
+  const [selectedInvoice, setSelectedInvoice] = useState("");
+
   return (
     <form className="col-span-12 md:col-span-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-xs" onSubmit={handleSubmit}>
       <h2 className="text-lg font-bold text-[#1F2937] mb-6 border-b border-gray-100 pb-4">Fleet Configuration</h2>
       <div className="space-y-6">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Departure Warehouse</label>
+          <select
+            className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm transition-all focus:border-[#71C168] focus:outline-none focus:ring-2 focus:ring-[#71C168]/20 bg-white"
+            value={selectedWarehouseId}
+            onChange={(e) => setSelectedWarehouseId(e.target.value === "" ? "" : Number(e.target.value))}
+            required
+          >
+            <option value="" disabled>-- Select Departure Point --</option>
+            {warehouses.map(w => (
+              <option key={w.id} value={w.id}>{w.name} ({w.capacity_kg} kg max)</option>
+            ))}
+          </select>
+          <p className="mt-1.5 text-xs text-gray-500">This location will automatically be added as the starting point (Demand: 0).</p>
+        </div>
+
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">Number of Vehicles</label>
           <input
@@ -70,8 +98,42 @@ export function RouteForm({
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold text-[#1F2937]">Delivery Destinations</h2>
             <div className="space-x-2">
-              <button type="button" className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-200" onClick={handleAddDestination}>+ Add Location</button>
               <button type="button" className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-50" onClick={handleReset}>Reset All</button>
+            </div>
+          </div>
+
+          <div className="mb-6 bg-blue-50/40 p-4 rounded-xl border border-blue-100 flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+            <div className="flex-1">
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">Import from Invoice</label>
+              <select 
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-[#71C168] focus:outline-none focus:ring-2 focus:ring-[#71C168]/20 bg-white"
+                value={selectedInvoice}
+                onChange={(e) => setSelectedInvoice(e.target.value)}
+              >
+                <option value="">-- Select an Invoice --</option>
+                {invoices.map(inv => (
+                  <option key={inv.id} value={inv.id}>{inv.companyName} ({inv.orderNumber}) - {inv.totalAmount.toLocaleString('id-ID', {style: 'currency', currency: 'IDR'})}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-3">
+              <button 
+                type="button" 
+                className="whitespace-nowrap rounded-lg bg-[#1E7B34] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#155d25] disabled:opacity-50 disabled:cursor-not-allowed" 
+                disabled={!selectedInvoice}
+                onClick={() => {
+                  if (selectedInvoice) {
+                    handleAddDestinationFromInvoice(selectedInvoice);
+                    setSelectedInvoice("");
+                  }
+                }}
+              >
+                Add to Route
+              </button>
+              <span className="text-gray-400 text-sm font-semibold">or</span>
+              <button type="button" className="whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-50" onClick={handleAddDestination}>
+                + Custom
+              </button>
             </div>
           </div>
           {errors.destinations && (errors.destinations as any).global && (

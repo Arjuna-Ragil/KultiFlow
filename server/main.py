@@ -7,6 +7,8 @@ from api.nego import router as nego_router
 from api.anomaly import router as anomaly_router
 from api.sales import router as sales_router
 
+from api.warehouse import router as warehouse_router
+
 from contextlib import asynccontextmanager
 from config.database import Base, engine
 from models.invoice import Invoice
@@ -18,6 +20,14 @@ async def lifespan(app: FastAPI):
     # Create database tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        try:
+            from sqlalchemy import text
+            await conn.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS latitude FLOAT;"))
+            await conn.execute(text("ALTER TABLE invoices ADD COLUMN IF NOT EXISTS longitude FLOAT;"))
+            await conn.execute(text("ALTER TABLE warehouses ADD COLUMN IF NOT EXISTS latitude FLOAT;"))
+            await conn.execute(text("ALTER TABLE warehouses ADD COLUMN IF NOT EXISTS longitude FLOAT;"))
+        except Exception as e:
+            print("Migration warning:", e)
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -35,6 +45,7 @@ app.include_router(route_router, prefix="/api/route", tags=["route"])
 app.include_router(nego_router, prefix="/api/nego", tags=["nego"])
 app.include_router(anomaly_router, prefix="/api/anomaly", tags=["anomaly"])
 app.include_router(sales_router, prefix="/api/sales", tags=["sales"])
+app.include_router(warehouse_router, tags=["warehouse"])
 
 @app.get("/")
 async def read_root():

@@ -13,32 +13,7 @@ interface CustomerShellProps {
 
 function CustomerShellInner({ children }: CustomerShellProps) {
   const { toastMessage } = useCart();
-  const [notifications, setNotifications] = useState<CustomerNotificationItem[]>([
-    {
-      id: "1",
-      title: "Fresh Arrival Alert",
-      message: "Direct harvest Fuji Apples & Granny Smith now available from Malang orchards.",
-      time: "10m ago",
-      read: false,
-      type: "deal",
-    },
-    {
-      id: "2",
-      title: "AI Negotiator Ready",
-      message: "Get special bulk discount rates by chatting directly with AgroBot.",
-      time: "1h ago",
-      read: false,
-      type: "info",
-    },
-    {
-      id: "3",
-      title: "Order #ORD-8412 Delivered",
-      message: "Your previous order has been delivered in prime quality condition.",
-      time: "1d ago",
-      read: true,
-      type: "success",
-    },
-  ]);
+  const [notifications, setNotifications] = useState<CustomerNotificationItem[]>([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const unreadCount = notifications.filter((item) => !item.read).length;
