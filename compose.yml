@@ -1,23 +1,89 @@
 services:
-  db:
-    image: postgres:18.4-alpine3.24
-    container_name: CF26_db
+  # db:
+  #   image: postgres:18.4-alpine3.24
+  #   container_name: CF26_db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: ${DB_USER}
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: ${DB_NAME}
+  #   volumes:
+  #     - pg_data:/var/lib/postgresql/data
+  #   networks:
+  #     - CF26_net
+
+  server:
+    build:
+      context: ./server
+    container_name: CF26_server
     restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "8000:8000"
     networks:
       - CF26_net
-  
-  qc-service:
-    build: ./ai-services/qc
+
+  qc:
+    build:
+      context: ./ai-services/qc
     container_name: CF26_qc
     restart: unless-stopped
     ports:
-      - "8001:8000"
+      - "8001:8001"
+    networks:
+      - CF26_net
+
+  route:
+    build:
+      context: ./ai-services/route
+    container_name: CF26_route
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    networks:
+      - CF26_net
+
+  nego:
+    build:
+      context: ./ai-services/nego
+    container_name: CF26_nego
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    networks:
+      - CF26_net
+
+  anomaly:
+    build:
+      context: ./ai-services/anomaly
+    container_name: CF26_anomaly
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    networks:
+      - CF26_net
+
+  sales-demand:
+    build:
+      context: "./ai-services/sales-demand forecasting"
+    container_name: CF26_sales_demand
+    restart: unless-stopped
+    ports:
+      - "8005:8005"
+    networks:
+      - CF26_net
+
+  frontend:
+    build:
+      context: ./ui
+    container_name: CF26_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    networks:
+      - CF26_net
 
 volumes:
   pg_data:

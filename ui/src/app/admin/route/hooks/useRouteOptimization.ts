@@ -104,7 +104,7 @@ export function useRouteOptimization() {
     setLoading(true)
     try {
       const payload = toPayload(form)
-      const res = await fetch("http://localhost:8000/optimize-route", {
+      const res = await fetch("http://localhost:8000/api/route/optimize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
