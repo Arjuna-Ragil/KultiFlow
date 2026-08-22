@@ -70,17 +70,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
   const [items, setItems] = useState<CartItem[]>([
     {
-      id: "prod-avocado",
+      id: "hass-avocado",
       name: "Organic Hass Avocados",
       price: 45000,
       originalPrice: 45000,
       quantity: 500,
       unit: "kg",
       image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?q=80&w=400&auto=format&fit=crop",
-      stockStatus: "In Stock",
+      stockStatus: "Low Stock",
     },
     {
-      id: "prod-strawberry",
+      id: "premium-strawberry",
       name: "Premium Strawberries",
       price: 85000,
       originalPrice: 85000,
@@ -115,7 +115,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, { ...newItem, quantity }];
     });
-    showToast(`${newItem.name} ditambahkan ke keranjang`);
+    showToast(`${newItem.name} added to cart`);
   };
 
   const removeFromCart = (id: string) => {

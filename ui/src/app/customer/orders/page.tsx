@@ -1,24 +1,16 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import Link from "next/link";
-
 import {
   Truck,
   Package,
   CheckCircle2,
   Clock,
-  ChevronRight,
-  Eye,
-  FileText,
-  Download,
   X,
   Plus,
-  ArrowRight,
-  Sparkles,
   MapPin,
-  Calendar,
   AlertCircle,
+  Download,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
@@ -47,11 +39,11 @@ const initialOrders: CustomerOrder[] = [
   {
     id: "ord-1",
     orderNumber: "#ORD-7721",
-    date: "Oct 24, 2023",
+    date: "Oct 24, 2026",
     status: "Processing",
     totalAmount: 145000,
     deliveryMethod: "Standard Freight (3-5 Days)",
-    deliveryAddress: "Jl. Raya Kebon Jeruk No. 88, Blok B-4, Jakarta Barat",
+    deliveryAddress: "Jl. Raya Kebon Jeruk No. 88, Blok B-4, West Jakarta",
     items: [
       {
         name: "Organic Hass Avocados",
@@ -72,11 +64,11 @@ const initialOrders: CustomerOrder[] = [
   {
     id: "ord-2",
     orderNumber: "#ORD-7689",
-    date: "Oct 18, 2023",
+    date: "Oct 18, 2026",
     status: "Delivered",
     totalAmount: 320500,
     deliveryMethod: "Express Cold Chain (1-2 Days)",
-    deliveryAddress: "Komp. Pergudangan Marunda Center Blok C-12, Jakarta Utara",
+    deliveryAddress: "Komp. Pergudangan Marunda Center Blok C-12, North Jakarta",
     items: [
       {
         name: "Premium Strawberries",
@@ -203,7 +195,7 @@ export default function CustomerOrdersPage() {
         stockStatus: "In Stock",
       }, item.quantity);
     });
-    showToast("Semua produk dari pesanan ini ditambahkan ke keranjang!");
+    showToast("All items from this order added to your cart!");
     setSelectedOrder(null);
   };
 
@@ -215,27 +207,24 @@ export default function CustomerOrdersPage() {
           My Orders
         </h1>
         <p className="mt-1 text-sm text-gray-500">
-          Track and manage your fruit deliveries.
+          Track and manage your commercial fruit deliveries and procurement records.
         </p>
       </div>
 
-      {/* Tabs Filter */}
-      <div className="flex items-center gap-6 border-b border-gray-200 text-xs sm:text-sm">
+      {/* Tabs Filter - Matching Benchmark Pill Style */}
+      <div className="flex flex-wrap gap-2">
         {tabs.map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`pb-2.5 font-semibold transition-all relative cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
               activeTab === tab
-                ? "text-[#1E7B34]"
-                : "text-gray-500 hover:text-gray-800"
+                ? "bg-[#1E7B34] text-white shadow-xs"
+                : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
             }`}
           >
-            <span>{tab}</span>
-            {activeTab === tab && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1E7B34] rounded-full" />
-            )}
+            {tab}
           </button>
         ))}
       </div>
@@ -243,11 +232,11 @@ export default function CustomerOrdersPage() {
       {/* Order Cards List */}
       <div className="space-y-4">
         {filteredOrders.length === 0 ? (
-          <div className="py-10 text-center bg-white rounded-2xl border border-gray-200 p-8 space-y-3">
+          <div className="py-10 text-center bg-white rounded-2xl border border-gray-200 p-8 space-y-3 shadow-2xs">
             <Package className="h-12 w-12 text-gray-300 mx-auto stroke-1" />
-            <h3 className="text-sm font-bold text-gray-700">Tidak ada pesanan ditemukan</h3>
+            <h3 className="text-sm font-bold text-gray-700">No orders found</h3>
             <p className="text-xs text-gray-400 max-w-xs mx-auto">
-              Belum ada riwayat pesanan untuk kategori &quot;{activeTab}&quot;.
+              There is no order history for &quot;{activeTab}&quot;.
             </p>
           </div>
         ) : (
@@ -334,19 +323,19 @@ export default function CustomerOrdersPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-bold text-[#1F2937]">
-                    Detail Pesanan {selectedOrder.orderNumber}
+                    Order Details: {selectedOrder.orderNumber}
                   </h3>
                   {getStatusBadge(selectedOrder.status)}
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Dibuat pada {selectedOrder.date} • Metode: {selectedOrder.deliveryMethod}
+                  Placed on {selectedOrder.date} • Method: {selectedOrder.deliveryMethod}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedOrder(null)}
                 className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors cursor-pointer"
-                title="Tutup"
+                title="Close"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -357,7 +346,7 @@ export default function CustomerOrdersPage() {
               <div className="flex items-start gap-2 text-gray-600">
                 <MapPin className="h-4 w-4 text-[#71C168] shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-semibold text-gray-700">Alamat Pengiriman:</span>
+                  <span className="font-semibold text-gray-700">Delivery Address:</span>
                   <p className="text-gray-500 mt-0.5">{selectedOrder.deliveryAddress}</p>
                 </div>
               </div>
@@ -366,7 +355,7 @@ export default function CustomerOrdersPage() {
             {/* Itemized List */}
             <div className="mt-4 space-y-2.5">
               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-                Daftar Produk ({selectedOrder.items.length})
+                Product Items ({selectedOrder.items.length})
               </h4>
               <div className="divide-y divide-gray-100 rounded-xl border border-gray-200 bg-white">
                 {selectedOrder.items.map((item, idx) => (
@@ -394,7 +383,7 @@ export default function CustomerOrdersPage() {
 
             {/* Total Summary */}
             <div className="mt-4 pt-3 border-t border-gray-100 flex items-baseline justify-between">
-              <span className="text-sm font-bold text-gray-700">Total Pembayaran</span>
+              <span className="text-sm font-bold text-gray-700">Total Payment</span>
               <span className="text-lg font-black text-[#1E7B34]">
                 {formatPrice(selectedOrder.totalAmount)}
               </span>
@@ -408,18 +397,18 @@ export default function CustomerOrdersPage() {
                 className="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-[#71C168] hover:bg-[#60ab58] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Plus className="h-3.5 w-3.5" />
-                <span>Pesan Ulang (Reorder)</span>
+                <span>Reorder Items</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => {
-                  showToast(`Invoice untuk ${selectedOrder.orderNumber} sedang diunduh...`);
+                  showToast(`Invoice for ${selectedOrder.orderNumber} downloading...`);
                 }}
                 className="w-full sm:flex-1 py-2.5 px-4 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Download className="h-3.5 w-3.5" />
-                <span>Unduh Invoice (PDF)</span>
+                <span>Download Invoice (PDF)</span>
               </button>
             </div>
           </div>

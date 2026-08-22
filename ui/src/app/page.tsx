@@ -71,12 +71,12 @@ export default function LandingPage() {
               </p>
 
               <div className="pt-2">
-                <button
-                  onClick={() => alert("Catalog exploring is available in Admin QC mode.")}
-                  className="px-8 py-3.5 rounded-lg bg-[#86CA7F] hover:bg-[#74BA6C] text-white font-bold text-base shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                <Link
+                  href="/customer/dashboard"
+                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg bg-[#71C168] hover:bg-[#60ab58] text-white font-bold text-base shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                 >
                   Explore Catalog
-                </button>
+                </Link>
               </div>
             </div>
 

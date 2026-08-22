@@ -20,7 +20,11 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
       ? "route"
       : currentPath.includes("/forecasting")
         ? "forecasting"
-        : "dashboard";
+        : currentPath.includes("/invoices")
+          ? "invoices"
+          : currentPath.includes("/catalog")
+            ? "catalog"
+            : "dashboard";
 
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col justify-between border-r border-gray-200 bg-white">

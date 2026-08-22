@@ -66,12 +66,14 @@ export function CartDrawer() {
           </div>
 
           {/* Cart Item List */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className={`flex-1 overflow-y-auto p-6 ${items.length === 0 ? "flex items-center justify-center" : "space-y-4"}`}>
             {items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 text-center text-gray-400">
-                <ShoppingBag className="h-12 w-12 stroke-1 mb-3 text-gray-300" />
-                <p className="font-semibold text-gray-600">Your cart is empty</p>
-                <p className="text-xs text-gray-400 mt-1 max-w-xs">
+              <div className="flex flex-col items-center justify-center text-center text-gray-400 my-auto">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-50 border border-gray-100 mb-4 shadow-2xs">
+                  <ShoppingBag className="h-8 w-8 stroke-1 text-gray-300" />
+                </div>
+                <p className="text-base font-bold text-gray-700">Your cart is empty</p>
+                <p className="text-xs text-gray-400 mt-1.5 max-w-xs leading-relaxed">
                   Ask AgroBot in AI Negotiator to find and negotiate the freshest deals!
                 </p>
               </div>

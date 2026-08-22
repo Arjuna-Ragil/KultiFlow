@@ -1,126 +1,30 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Star, ShoppingCart } from "lucide-react";
+import { Star, ShoppingCart, Search, Leaf, MessageSquareText } from "lucide-react";
 import { useCart } from "../context/CartContext";
-
-const categories = ["All Fruits", "Citrus", "Berries", "Tropical"];
-
-export type Product = {
-  id: string;
-  name: string;
-  desc: string;
-  price: number;
-  priceStr: string;
-  unit: string;
-  tag?: string;
-  tagColor?: string;
-  category: string;
-  image: string;
-  isFeatured?: boolean;
-};
-
-export const dummyProducts: Product[] = [
-  {
-    id: "prod-avocado",
-    name: "Organic Hass Avocados",
-    desc: "Rich, nutty flavor with a creamy texture. Harvested at peak ripeness.",
-    price: 45000,
-    priceStr: "Rp 45.000",
-    unit: "/kg",
-    tag: "BEST SELLER",
-    tagColor: "bg-[#71C168] text-white",
-    category: "Tropical",
-    image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?q=80&w=400&auto=format&fit=crop",
-    isFeatured: true,
-  },
-  {
-    id: "prod-strawberry",
-    name: "Premium Strawberries",
-    desc: "Plump, vibrant red, and naturally sweet highland strawberries.",
-    price: 85000,
-    priceStr: "Rp 85.000",
-    unit: "/kg",
-    tag: "FRESH HARVEST",
-    tagColor: "bg-[#1E7B34] text-white",
-    category: "Berries",
-    image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?q=80&w=400&auto=format&fit=crop",
-    isFeatured: true,
-  },
-  {
-    id: "1",
-    name: "Premium Fuji Apple",
-    desc: "Crisp, sweet, and perfectly balanced direct from Malang highland orchards.",
-    price: 45000,
-    priceStr: "Rp 45.000",
-    unit: "/kg",
-    tag: "FEATURED SEASON",
-    tagColor: "bg-[#71C168] text-white",
-    category: "Berries",
-    image: "/fuji_apples.jpg",
-    isFeatured: true,
-  },
-  {
-    id: "2",
-    name: "Valencia Orange",
-    desc: "Juicy and sweet, perfect for fresh pressing and bulk retail.",
-    price: 32000,
-    priceStr: "Rp 32.000",
-    unit: "/kg",
-    tag: "In Stock",
-    tagColor: "bg-gray-200 text-gray-700",
-    category: "Citrus",
-    image: "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: "3",
-    name: "Honeygold Pineapple",
-    desc: "Exceptionally sweet core, practically zero acidity, ready to slice.",
-    price: 55000,
-    priceStr: "Rp 55.000",
-    unit: "/pcs",
-    tag: "Low Stock",
-    tagColor: "bg-amber-100 text-amber-800",
-    category: "Tropical",
-    image: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: "4",
-    name: "Cavendish Banana",
-    desc: "Classic, versatile, and packed with natural sweetness and energy.",
-    price: 22000,
-    priceStr: "Rp 22.000",
-    unit: "/kg",
-    tag: "In Stock",
-    tagColor: "bg-gray-200 text-gray-700",
-    category: "Tropical",
-    image: "https://images.unsplash.com/photo-1603833665858-e61d17a86224?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: "granny-smith",
-    name: "Granny Smith Apple",
-    desc: "Tart, firm, and excellent for gourmet culinary & juice blends.",
-    price: 52000,
-    priceStr: "Rp 52.000",
-    unit: "/kg",
-    tag: "Low Stock",
-    tagColor: "bg-amber-100 text-amber-800",
-    category: "Citrus",
-    image: "/granny_smith.jpg",
-  },
-];
+import { UNIFIED_PRODUCTS, PRODUCT_CATEGORIES, ProductItem } from "@/lib/products";
 
 export default function CustomerProductsPage() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState("All Fruits");
+  const [activeCategory, setActiveCategory] = useState<string>("All Fruits");
+  const [searchQuery, setSearchQuery] = useState("");
   const { addToCart, startBuyNow } = useCart();
 
-  const filteredProducts = dummyProducts.filter((product) =>
-    activeCategory === "All Fruits" ? true : product.category === activeCategory
-  );
+  const filteredProducts = UNIFIED_PRODUCTS.filter((product) => {
+    const matchCategory =
+      activeCategory === "All Fruits" || product.category === activeCategory;
+    const matchSearch =
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.origin.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.sku.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCategory && matchSearch;
+  });
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: ProductItem) => {
     addToCart({
       id: product.id,
       name: product.name,
@@ -128,11 +32,11 @@ export default function CustomerProductsPage() {
       originalPrice: product.price,
       unit: product.unit.replace("/", ""),
       image: product.image,
-      stockStatus: product.tag === "Low Stock" ? "Low Stock" : "In Stock",
+      stockStatus: product.stockStatus,
     });
   };
 
-  const handleBuyNow = (product: Product) => {
+  const handleBuyNow = (product: ProductItem) => {
     startBuyNow(
       {
         id: product.id,
@@ -141,7 +45,7 @@ export default function CustomerProductsPage() {
         originalPrice: product.price,
         unit: product.unit.replace("/", ""),
         image: product.image,
-        stockStatus: product.tag === "Low Stock" ? "Low Stock" : "In Stock",
+        stockStatus: product.stockStatus,
       },
       1
     );
@@ -151,21 +55,44 @@ export default function CustomerProductsPage() {
   return (
     <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 pt-2 pb-8 space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
-            Fresh Arrivals
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Discover our hand-picked selection of organic, seasonal fruits sourced directly from local farmers
-          </p>
+      <div>
+        <h1 className="text-3xl font-extrabold tracking-tight text-[#71C168]">
+          Fresh Arrivals
+        </h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Discover our hand-picked selection of organic, seasonal fruits sourced directly from local farmers.
+        </p>
+      </div>
+
+      {/* Standardized Search & Filter Bar */}
+      <div className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs md:flex-row md:items-center md:justify-between">
+        {/* Search Bar */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search fruit by name, category, origin..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 py-2 pl-10 pr-9 text-xs font-medium text-gray-700 placeholder-gray-400 focus:border-[#71C168] focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#71C168]/20 transition-all"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              ✕
+            </button>
+          )}
         </div>
 
-        {/* Categories Filter - Aligned with the subtext on the baseline */}
-        <div className="flex flex-wrap gap-2 md:pb-0.5 shrink-0">
-          {categories.map((category) => (
+        {/* Categories Filter Pills */}
+        <div className="flex flex-wrap items-center gap-2">
+          {PRODUCT_CATEGORIES.map((category) => (
             <button
               key={category}
+              type="button"
               onClick={() => setActiveCategory(category)}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-colors cursor-pointer ${
                 activeCategory === category
@@ -194,14 +121,25 @@ export default function CustomerProductsPage() {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
 
-              {/* Tag */}
-              {product.tag && (
-                <div
-                  className={`absolute top-2.5 right-2.5 px-2 py-0.5 text-[10px] font-bold rounded-md z-10 shadow-xs ${product.tagColor}`}
+              {/* Grade Badge */}
+              <div className="absolute top-2.5 left-2.5 flex gap-1">
+                <span className="rounded-md bg-white/95 px-2 py-0.5 text-[10px] font-bold text-[#1E7B34] shadow-2xs backdrop-blur-xs">
+                  {product.grade}
+                </span>
+              </div>
+
+              {/* Stock Status Tag */}
+              <div className="absolute top-2.5 right-2.5">
+                <span
+                  className={`rounded-md px-2 py-0.5 text-[10px] font-bold shadow-xs ${
+                    product.stockStatus === "In Stock"
+                      ? "bg-[#4CAF50] text-white"
+                      : "bg-amber-500 text-white"
+                  }`}
                 >
-                  {product.tag}
-                </div>
-              )}
+                  {product.stockStatus}
+                </span>
+              </div>
             </div>
 
             {/* Content */}
@@ -244,22 +182,42 @@ export default function CustomerProductsPage() {
                     type="button"
                     onClick={() => handleAddToCart(product)}
                     className="h-9 w-9 rounded-xl bg-[#71C168]/15 text-[#1E7B34] hover:bg-[#71C168]/25 flex items-center justify-center transition-colors cursor-pointer shrink-0"
-                    title="Tambah ke Keranjang"
+                    title="Add to Cart"
                   >
                     <ShoppingCart className="w-4 h-4" />
                   </button>
+
+                  <Link
+                    href="/customer/negotiator"
+                    className="h-9 w-9 rounded-xl bg-[#71C168]/15 text-[#1E7B34] hover:bg-[#71C168]/25 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                    title="Negotiate Price with AI"
+                  >
+                    <MessageSquareText className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         ))}
         {filteredProducts.length === 0 && (
-          <div className="col-span-full py-12 text-center text-gray-500">
-            No fruits found in this category.
+          <div className="col-span-full rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center">
+            <Leaf className="mx-auto h-10 w-10 text-gray-300 stroke-1" />
+            <p className="mt-3 text-sm font-bold text-gray-700">No fruits found</p>
+            <p className="mt-1 text-xs text-gray-400">
+              Try adjusting your search query or switching categories.
+            </p>
+            <button
+              onClick={() => {
+                setActiveCategory("All Fruits");
+                setSearchQuery("");
+              }}
+              className="mt-4 rounded-xl bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200 cursor-pointer"
+            >
+              Reset Filter
+            </button>
           </div>
         )}
       </div>
     </div>
   );
 }
-

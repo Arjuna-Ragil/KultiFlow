@@ -9,14 +9,11 @@ import {
   Search,
   ChevronDown,
   Download,
-  Calendar,
   Sparkles,
   ArrowLeft,
-  ShoppingBag,
-  Zap,
 } from "lucide-react";
 import { useCart, CartItem } from "../context/CartContext";
-import { dummyProducts, Product } from "../products/page";
+import { UNIFIED_PRODUCTS, ProductItem } from "@/lib/products";
 
 function OrderFormContent() {
   const router = useRouter();
@@ -69,12 +66,12 @@ function OrderFormContent() {
         // Fallback
         setOrderLines([
           {
-            id: dummyProducts[0].id,
-            name: dummyProducts[0].name,
-            price: dummyProducts[0].price,
-            originalPrice: dummyProducts[0].price,
-            unit: dummyProducts[0].unit.replace("/", ""),
-            image: dummyProducts[0].image,
+            id: UNIFIED_PRODUCTS[0].id,
+            name: UNIFIED_PRODUCTS[0].name,
+            price: UNIFIED_PRODUCTS[0].price,
+            originalPrice: UNIFIED_PRODUCTS[0].price,
+            unit: UNIFIED_PRODUCTS[0].unit.replace("/", ""),
+            image: UNIFIED_PRODUCTS[0].image,
             quantity: 1,
             stockStatus: "In Stock",
           },
@@ -87,12 +84,12 @@ function OrderFormContent() {
       } else {
         setOrderLines([
           {
-            id: dummyProducts[0].id,
-            name: dummyProducts[0].name,
-            price: dummyProducts[0].price,
-            originalPrice: dummyProducts[0].price,
-            unit: dummyProducts[0].unit.replace("/", ""),
-            image: dummyProducts[0].image,
+            id: UNIFIED_PRODUCTS[0].id,
+            name: UNIFIED_PRODUCTS[0].name,
+            price: UNIFIED_PRODUCTS[0].price,
+            originalPrice: UNIFIED_PRODUCTS[0].price,
+            unit: UNIFIED_PRODUCTS[0].unit.replace("/", ""),
+            image: UNIFIED_PRODUCTS[0].image,
             quantity: 500,
             stockStatus: "In Stock",
           },
@@ -145,8 +142,8 @@ function OrderFormContent() {
 
   // Filter products for Search box
   const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return dummyProducts.slice(0, 6);
-    return dummyProducts.filter(
+    if (!searchQuery.trim()) return UNIFIED_PRODUCTS.slice(0, 6);
+    return UNIFIED_PRODUCTS.filter(
       (p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.category.toLowerCase().includes(searchQuery.toLowerCase())
@@ -167,7 +164,7 @@ function OrderFormContent() {
     setOrderLines((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleAddProductFromSearch = (product: Product) => {
+  const handleAddProductFromSearch = (product: ProductItem) => {
     const newItem: CartItem = {
       id: product.id,
       name: product.name,
@@ -176,7 +173,7 @@ function OrderFormContent() {
       unit: product.unit.replace("/", ""),
       image: product.image,
       quantity: isBuyNowMode ? 1 : 100,
-      stockStatus: product.tag === "Low Stock" ? "Low Stock" : "In Stock",
+      stockStatus: product.stockStatus,
     };
     setOrderLines((prev) => {
       const idx = prev.findIndex((p) => p.id === product.id);
@@ -192,12 +189,12 @@ function OrderFormContent() {
     });
     setSearchQuery("");
     setIsSearchDropdownOpen(false);
-    showToast(`${product.name} ditambahkan ke Order Lines`);
+    showToast(`${product.name} added to Order Lines`);
   };
 
   const handleConfirmOrder = () => {
     if (orderLines.length === 0) {
-      showToast("Harap tambahkan minimal 1 produk kedalam Order Lines");
+      showToast("Please add at least 1 product to the Order Lines");
       return;
     }
     const newOrderId = `#ORD-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -215,7 +212,7 @@ function OrderFormContent() {
         status: "Processing",
         totalAmount,
         deliveryMethod,
-        deliveryAddress: deliveryAddress || "Alamat Kantor / Gudang Utama",
+        deliveryAddress: deliveryAddress || "Main Corporate Warehouse / HQ Address",
         items: orderLines.map((i) => ({
           name: i.name,
           quantity: i.quantity,
@@ -254,7 +251,7 @@ function OrderFormContent() {
       };
       localStorage.setItem("kf_order_draft", JSON.stringify(draftData));
     }
-    showToast("Draft pesanan berhasil disimpan!");
+    showToast("Order draft saved successfully!");
   };
 
   return (
@@ -265,7 +262,7 @@ function OrderFormContent() {
           type="button"
           onClick={() => router.push("/customer/products")}
           className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-[#71C168] transition-colors shadow-2xs cursor-pointer"
-          title="Kembali ke Katalog"
+          title="Back to Catalog"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -433,7 +430,7 @@ function OrderFormContent() {
                   {orderLines.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="py-6 text-center text-xs text-gray-400">
-                        Belum ada produk di order lines. Gunakan &quot;+ Add Product&quot; atau cari produk di bawah.
+                        No products in order lines yet. Use &quot;+ Add Product&quot; or search below.
                       </td>
                     </tr>
                   ) : (
@@ -490,7 +487,7 @@ function OrderFormContent() {
                             type="button"
                             onClick={() => handleRemoveOrderLine(item.id)}
                             className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded cursor-pointer"
-                            title="Hapus item"
+                            title="Remove item"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -523,7 +520,7 @@ function OrderFormContent() {
               {isSearchDropdownOpen && (
                 <div className="absolute left-0 right-0 top-full mt-1 z-20 rounded-xl border border-gray-200 bg-white p-1.5 shadow-xl animate-in fade-in slide-in-from-top-1 duration-150 max-h-56 overflow-y-auto">
                   <div className="px-2 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                    Pilih Produk untuk Ditambahkan
+                    Select Product to Add
                   </div>
                   {searchResults.map((product) => (
                     <button
@@ -640,7 +637,7 @@ function OrderFormContent() {
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-[#1F2937]">Order Placed Successfully!</h3>
               <p className="text-xs sm:text-sm text-gray-500">
-                Pesanan pengadaan Anda telah dikonfirmasi dan langsung dijadwalkan ke armada logistik cold-chain.
+                Your procurement order has been confirmed and scheduled for cold-chain fleet delivery.
               </p>
             </div>
 
@@ -676,18 +673,18 @@ function OrderFormContent() {
                 }}
                 className="w-full py-2.5 rounded-xl bg-[#71C168] hover:bg-[#60ab58] text-white font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer"
               >
-                Kembali ke Katalog Produk
+                Back to Product Catalog
               </button>
 
               <button
                 type="button"
                 onClick={() => {
-                  showToast("Invoice PDF sedang disiapkan untuk diunduh...");
+                  showToast("Invoice PDF is being prepared for download...");
                 }}
                 className="w-full py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Download className="h-3.5 w-3.5" />
-                <span>Unduh Surat Jalan / Invoice</span>
+                <span>Download Invoice (PDF)</span>
               </button>
             </div>
           </div>

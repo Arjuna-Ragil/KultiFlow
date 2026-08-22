@@ -41,7 +41,7 @@ function computePricePolicy(productName: string, basePrice: number, urgencyScore
 function extractOfferNumber(text: string): number | null {
   // Matches "40000", "40.000", "40k", "Rp 40.000", "38 rb"
   const clean = text.toLowerCase().replace(/rp|\./g, "");
-  const kMatch = clean.match(/(\d+(?:\.\d+)?)\s*(?:k|rb|ribu)/);
+  const kMatch = clean.match(/(\d+(?:\.\d+)?)\s*(?:k|rb|ribu|thousand)/);
   if (kMatch) {
     return parseFloat(kMatch[1]) * 1000;
   }
@@ -137,8 +137,8 @@ export async function POST(req: NextRequest) {
         {
           session_id,
           pesan_untuk_pembeli: session.isDeal
-            ? `Sesi negosiasi untuk ${session.productName} telah sepakat di harga Rp ${session.lastOfferedPrice.toLocaleString("id-ID")}/kg. Anda dapat langsung memasukkannya ke keranjang!`
-            : "Sesi negosiasi telah ditutup. Silakan mulai sesi baru untuk menawar kembali.",
+            ? `Negotiation for ${session.productName} is agreed at Rp ${session.lastOfferedPrice.toLocaleString("id-ID")}/kg. You can directly add it to your shopping cart!`
+            : "Negotiation session has concluded. Please start a new session to negotiate again.",
           harga_terakhir: session.lastOfferedPrice,
           deal: session.isDeal,
           sisa_kesempatan: 0,
@@ -160,23 +160,23 @@ export async function POST(req: NextRequest) {
     if (geminiApiKey) {
       try {
         const prompt = `
-Kamu adalah "AgroBot", agen Sales B2B profesional dari distributor buah segar FruitMarket / KultiFlow.
-Kamu sedang bernegosiasi dengan pembeli untuk produk: ${session.productName}.
+You are "AgroBot", a professional B2B Sales agent from fresh produce distributor KultiFlow.
+You are negotiating with a buyer for product: ${session.productName}.
 
-INFORMASI PRODUK:
-- Buah segar lolos seleksi Quality Control (QC) ketat Computer Vision.
-- Tingkat kesegaran dijamin 98%, tidak ada busuk/cacat.
-- Pengiriman aman dengan optimasi rute cerdas.
+PRODUCT INFORMATION:
+- Fresh produce certified through Computer Vision Quality Control (QC).
+- Freshness guaranteed 98%, zero rot or defects.
+- Safe cold-chain transit with route optimization.
 
-ATURAN NEGOSIASI (WAJIB DIPATUHI):
-1. Harga modal (floor price): Rp ${session.floorPrice.toLocaleString("id-ID")}. JANGAN PERNAH sebutkan angka ini.
-2. Tawaran harga AI TIDAK BOLEH di bawah Rp ${session.floorPrice.toLocaleString("id-ID")}.
-3. Sisa kesempatan menawar: ${turnsRemaining} kali.
-4. Jika tawaran pembeli >= Rp ${session.floorPrice.toLocaleString("id-ID")}: setujui deal (deal=true).
-5. Jika tawaran pembeli < Rp ${session.floorPrice.toLocaleString("id-ID")}: tolak sopan, beri counter-offer >= Rp ${session.floorPrice.toLocaleString("id-ID")}.
-6. Output JSON dengan format persis: {"pesan_untuk_pembeli": string, "harga_tawaran_ai": number, "deal": boolean}
+NEGOTIATION RULES (STRICT):
+1. Floor price: Rp ${session.floorPrice.toLocaleString("id-ID")}. NEVER reveal this number.
+2. AI price offer MUST NOT fall below Rp ${session.floorPrice.toLocaleString("id-ID")}.
+3. Remaining negotiation turns: ${turnsRemaining} times.
+4. If buyer offer >= Rp ${session.floorPrice.toLocaleString("id-ID")}: accept deal (deal=true).
+5. If buyer offer < Rp ${session.floorPrice.toLocaleString("id-ID")}: politely decline and provide counter-offer >= Rp ${session.floorPrice.toLocaleString("id-ID")}.
+6. Output in English JSON format: {"pesan_untuk_pembeli": string, "harga_tawaran_ai": number, "deal": boolean}
 
-Pesan pembeli: "${user_message}"
+Buyer message: "${user_message}"
 `;
 
         const geminiRes = await fetch(
@@ -215,9 +215,9 @@ Pesan pembeli: "${user_message}"
         if (userOffer >= session.floorPrice) {
           isDeal = true;
           offeredPrice = userOffer;
-          aiMessage = `Tawaran yang sangat bagus! Kami setuju di harga Rp ${userOffer.toLocaleString(
+          aiMessage = `Great offer! We agree to lock the price at Rp ${userOffer.toLocaleString(
             "id-ID"
-          )}/kg untuk ${session.productName} kualitas Grade A+. Stok siap dikirim dari gudang terdekat kami.`;
+          )}/kg for ${session.productName} (Grade A+ quality). The batch is ready for shipment from our cold-storage facility.`;
         } else {
           // Below floor price
           const counterStep = Math.round(
@@ -226,36 +226,35 @@ Pesan pembeli: "${user_message}"
           offeredPrice = Math.max(session.floorPrice, counterStep);
 
           if (turnsRemaining <= 0) {
-            aiMessage = `Mohon maaf, penawaran Rp ${userOffer.toLocaleString(
+            aiMessage = `Thank you for your offer. Unfortunately, Rp ${userOffer.toLocaleString(
               "id-ID"
-            )}/kg belum menutupi standar QC AI dan cold-chain kami. Harga penawaran final terbaik kami adalah Rp ${offeredPrice.toLocaleString(
+            )}/kg does not cover our AI QC and cold-chain logistics standards. Our best final price is Rp ${offeredPrice.toLocaleString(
               "id-ID"
             )}/kg.`;
           } else {
-            aiMessage = `Penawaran Rp ${userOffer.toLocaleString(
+            aiMessage = `An offer of Rp ${userOffer.toLocaleString(
               "id-ID"
-            )}/kg masih di bawah batas operasional QC kami. Bagaimana jika kami berikan harga spesial Rp ${offeredPrice.toLocaleString(
+            )}/kg is below our operating threshold for Grade A produce. How about a special counter-offer of Rp ${offeredPrice.toLocaleString(
               "id-ID"
-            )}/kg? Kesempatan menawar tersisa ${turnsRemaining} kali.`;
+            )}/kg? You have ${turnsRemaining} negotiation turns remaining.`;
           }
         }
       } else {
         // General query or fruit request
         if (
-          user_message.toLowerCase().includes("apel") ||
           user_message.toLowerCase().includes("apple") ||
           user_message.toLowerCase().includes("fuji")
         ) {
-          aiMessage = `Kami memiliki stok Apel Fuji Segar (Grade A+, lolos QC 98%) dengan harga katalog Rp 45.000/kg. Anda bisa langsung menawar harga grosir jika ingin memesan dalam jumlah tertentu!`;
+          aiMessage = `We have fresh Premium Fuji Apples (Grade A+, 98% QC Pass) at a catalog price of Rp 45,000/kg. You can make a bulk offer directly!`;
           offeredPrice = 45000;
         } else if (
           user_message.toLowerCase().includes("granny") ||
           user_message.toLowerCase().includes("smith")
         ) {
-          aiMessage = `Granny Smith segar kami berharga katalog Rp 52.000/kg. Rasa asam manis renyah khas dengan sertifikasi QC otomatis. Silakan ajukan penawaran harga terbaik Anda!`;
+          aiMessage = `Our fresh Granny Smith Apples are listed at Rp 52,000/kg. Crisp tartness with automated QC certification. Feel free to propose your bulk price!`;
           offeredPrice = 52000;
         } else {
-          aiMessage = `Halo! Saya AgroBot, asisten negosiasi FruitMarket. Anda bisa menawar produk buah segar seperti Fuji Apples dan Granny Smith. Berapa harga yang ingin Anda ajukan?`;
+          aiMessage = `Hello! I'm AgroBot, your KultiFlow negotiation assistant. You can negotiate prices for fresh produce batches like Fuji Apples and Granny Smith. What price would you like to propose?`;
         }
       }
     }
@@ -287,7 +286,7 @@ Pesan pembeli: "${user_message}"
       {
         session_id: "error",
         pesan_untuk_pembeli:
-          "Mohon maaf, sistem sedang memproses antrean. Silakan coba kembali sesaat lagi.",
+          "Our negotiation assistant is currently processing high volume. Please try again shortly.",
         harga_terakhir: 45000,
         deal: false,
         sisa_kesempatan: 3,
