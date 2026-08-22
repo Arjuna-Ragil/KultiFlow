@@ -21,7 +21,7 @@ export default function LandingPage() {
               Login as Admin
             </Link>
             <Link
-              href="/customer/negotiator"
+              href="/customer/dashboard"
               className="px-5 py-2.5 rounded-lg bg-[#71C168] hover:bg-[#60ab58] text-white text-sm font-semibold transition-colors shadow-xs"
             >
               Login as Customer
