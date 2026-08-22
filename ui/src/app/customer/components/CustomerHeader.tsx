@@ -2,33 +2,35 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, LogOut, X, CheckCircle2, ShieldAlert, Sparkles } from "lucide-react";
+import { Bell, ShoppingCart, LogOut, X, CheckCircle2, Sparkles, Tag } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
-export interface NotificationItem {
+export interface CustomerNotificationItem {
   id: string;
   title: string;
   message: string;
   time: string;
   read: boolean;
-  type: "success" | "warning" | "info";
+  type: "success" | "deal" | "info";
 }
 
-interface AdminHeaderProps {
-  notifications: NotificationItem[];
+interface CustomerHeaderProps {
+  notifications: CustomerNotificationItem[];
   unreadCount: number;
   isNotifOpen: boolean;
   onToggleNotifications: () => void;
   onMarkAllRead: () => void;
 }
 
-export function AdminHeader({
+export function CustomerHeader({
   notifications,
   unreadCount,
   isNotifOpen,
   onToggleNotifications,
   onMarkAllRead,
-}: AdminHeaderProps) {
+}: CustomerHeaderProps) {
   const notifRef = useRef<HTMLDivElement>(null);
+  const { totalItems, toggleCart } = useCart();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -44,8 +46,8 @@ export function AdminHeader({
     switch (type) {
       case "success":
         return <CheckCircle2 className="h-4 w-4 text-[#71C168]" />;
-      case "warning":
-        return <ShieldAlert className="h-4 w-4 text-[#DC2626]" />;
+      case "deal":
+        return <Tag className="h-4 w-4 text-[#1E7B34]" />;
       default:
         return <Sparkles className="h-4 w-4 text-blue-600" />;
     }
@@ -55,8 +57,8 @@ export function AdminHeader({
     switch (type) {
       case "success":
         return "bg-[#71C168]/10";
-      case "warning":
-        return "bg-red-50";
+      case "deal":
+        return "bg-emerald-50";
       default:
         return "bg-blue-50";
     }
@@ -65,6 +67,21 @@ export function AdminHeader({
   return (
     <header className="flex shrink-0 items-center justify-end px-6 sm:px-8 pt-3 pb-1 bg-transparent z-30">
       <div className="flex items-center gap-3">
+        {/* Shopping Cart Button */}
+        <button
+          onClick={toggleCart}
+          className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 shadow-xs transition-all hover:bg-gray-50 hover:text-[#71C168]"
+          title="Shopping Cart"
+          type="button"
+        >
+          <ShoppingCart className="h-5 w-5" />
+          {totalItems > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 flex min-w-5 h-5 px-1 items-center justify-center rounded-full bg-[#DC2626] text-[10px] font-bold text-white ring-2 ring-white shadow-xs leading-none">
+              {totalItems > 99 ? "99+" : totalItems}
+            </span>
+          )}
+        </button>
+
         {/* Notification Bell Button */}
         <div className="relative" ref={notifRef}>
           <button
@@ -97,7 +114,7 @@ export function AdminHeader({
                   {notifications.length > 0 && (
                     <button
                       onClick={onMarkAllRead}
-                      className="text-xs font-semibold text-[#71C168] hover:underline"
+                      className="text-xs font-semibold text-[#71C168] hover:underline cursor-pointer"
                       type="button"
                     >
                       Mark all read
@@ -105,7 +122,7 @@ export function AdminHeader({
                   )}
                   <button
                     onClick={onToggleNotifications}
-                    className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                    className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 cursor-pointer"
                     type="button"
                   >
                     <X className="h-4 w-4" />
@@ -126,7 +143,11 @@ export function AdminHeader({
                         !item.read ? "bg-gray-50/80 hover:bg-gray-100/70" : "hover:bg-gray-50"
                       }`}
                     >
-                      <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${getNotificationBg(item.type)}`}>
+                      <div
+                        className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${getNotificationBg(
+                          item.type
+                        )}`}
+                      >
                         {getNotificationIcon(item.type)}
                       </div>
                       <div className="flex-1 min-w-0">
