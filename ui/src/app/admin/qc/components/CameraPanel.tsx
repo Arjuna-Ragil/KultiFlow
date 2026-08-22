@@ -109,8 +109,24 @@ export function CameraPanel({
             />
             <canvas ref={canvasRef} className="hidden" />
 
+            {/* Targeting Square Overlay */}
+            <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center overflow-hidden">
+              <div className="relative flex aspect-square h-full max-h-full w-auto max-w-full items-center justify-center border-4 border-[#71C168]/50 shadow-[0_0_0_9999px_rgba(0,0,0,0.5)] transition-all">
+                {/* Corner Accents */}
+                <div className="absolute -left-1 -top-1 h-12 w-12 border-l-4 border-t-4 border-[#71C168]" />
+                <div className="absolute -right-1 -top-1 h-12 w-12 border-r-4 border-t-4 border-[#71C168]" />
+                <div className="absolute -bottom-1 -left-1 h-12 w-12 border-b-4 border-l-4 border-[#71C168]" />
+                <div className="absolute -bottom-1 -right-1 h-12 w-12 border-b-4 border-r-4 border-[#71C168]" />
+                
+                {/* Scanline scoped to targeting box */}
+                {isScanning && (
+                  <div className="absolute left-0 right-0 top-0 h-1 bg-[#71C168] shadow-[0_0_14px_#71C168] animate-scanline" />
+                )}
+              </div>
+            </div>
+
             {currentResult && (
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm">
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-20">
                 <div className={`p-4 rounded-2xl backdrop-blur-xl border flex items-center justify-between shadow-2xl transition-all duration-300 ${
                   currentResult.label.toLowerCase() === 'fresh' 
                     ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-100' 
@@ -127,8 +143,6 @@ export function CameraPanel({
                 </div>
               </div>
             )}
-
-            <div className="absolute left-0 right-0 top-0 h-1 bg-[#71C168] shadow-[0_0_14px_#71C168] animate-scanline" />
           </div>
         )}
       </div>

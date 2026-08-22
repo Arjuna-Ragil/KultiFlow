@@ -81,9 +81,27 @@ export function useQCLogic() {
         const context = canvas.getContext("2d");
 
         if (context) {
-          canvas.width = video.videoWidth || 640;
-          canvas.height = video.videoHeight || 480;
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const videoWidth = video.videoWidth || 640;
+          const videoHeight = video.videoHeight || 480;
+          
+          // Determine the shortest side to make a square
+          const cropSize = Math.min(videoWidth, videoHeight);
+          
+          // Calculate center coordinates for cropping
+          const startX = (videoWidth - cropSize) / 2;
+          const startY = (videoHeight - cropSize) / 2;
+
+          // Target ML model dimensions to save bandwidth
+          const targetSize = 224;
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+          
+          // Crop from center and scale down to 224x224 directly on the canvas
+          context.drawImage(
+            video, 
+            startX, startY, cropSize, cropSize, // Source crop
+            0, 0, targetSize, targetSize        // Destination (scaled to 224x224)
+          );
 
           try {
             const blob = await new Promise<Blob | null>((resolve) =>
