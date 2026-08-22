@@ -14,7 +14,8 @@
     "ogl": "^1.0.11",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.2",
+    "recharts": "^3.10.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

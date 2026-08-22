@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { FileText, LayoutDashboard, Route, Scan, TrendingUp, Leaf, LogOut } from "lucide-react";
+import { FileText, LayoutDashboard, Route, Scan, TrendingUp, Leaf, LogOut, ShoppingBag } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-type NavItem = "dashboard" | "qc" | "route" | "forecasting" | "invoices";
+type NavItem = "dashboard" | "qc" | "route" | "catalog" | "forecasting" | "invoices";
 
 interface AdminSidebarProps {
   activePath?: string;
@@ -18,8 +18,8 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
     ? "qc"
     : currentPath.includes("/route")
       ? "route"
-      : currentPath.includes("/dashboard")
-        ? "dashboard"
+      : currentPath.includes("/forecasting")
+        ? "forecasting"
         : "dashboard";
 
   return (
@@ -65,21 +65,41 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
             <span>Route Optimization</span>
           </Link>
 
-          <button
-            disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60 cursor-not-allowed"
+          <Link
+            href="/admin/forecasting"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "forecasting"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
           >
             <TrendingUp className="h-5 w-5" />
             <span>Forecasting</span>
-          </button>
+          </Link>
 
-          <button
-            disabled
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 opacity-60 cursor-not-allowed"
+          <Link
+            href="/admin/invoices"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "invoices"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
           >
             <FileText className="h-5 w-5" />
             <span>Invoices</span>
-          </button>
+          </Link>
+
+          <Link
+            href="/admin/catalog"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "catalog"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            <ShoppingBag className="h-5 w-5" />
+            <span>Catalog</span>
+          </Link>
         </nav>
       </div>
 

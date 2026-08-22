@@ -11,8 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Pindahkan seluruh kode dan dataset (termasuk dummy_orders.csv)
 COPY . .
 
-# Beri tahu Docker bahwa aplikasi ini berjalan di port 8002
-EXPOSE 8002
+# Beri tahu Docker bahwa aplikasi ini berjalan di port 8004
+EXPOSE 8004
 
 # Perintah untuk menjalankan server FastAPI
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8004"]

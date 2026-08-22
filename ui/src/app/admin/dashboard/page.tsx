@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Scan, Route, TrendingUp, FileText, ArrowRight } from "lucide-react";
+import { Scan, Route, TrendingUp, FileText, ArrowRight, ShoppingBag } from "lucide-react";
 
 export default function Page() {
   const modules = [
@@ -20,20 +20,28 @@ export default function Page() {
       disabled: false,
     },
     {
+      title: "Catalog",
+      description: "Manage fresh fruit inventory, pricing, grading, and stock levels.",
+      icon: ShoppingBag,
+      href: "/admin/catalog",
+      color: "bg-[#71C168]/10 text-[#71C168]",
+      disabled: false,
+    },
+    {
       title: "Forecasting",
       description: "Predictive analytics for demand and supply chain planning.",
       icon: TrendingUp,
-      href: "#",
-      color: "bg-gray-100 text-gray-400",
-      disabled: true,
+      href: "/admin/forecasting",
+      color: "bg-[#71C168]/10 text-[#71C168]",
+      disabled: false,
     },
     {
       title: "Invoices",
       description: "Billing, invoices, and financial reporting for stakeholders.",
       icon: FileText,
-      href: "#",
-      color: "bg-gray-100 text-gray-400",
-      disabled: true,
+      href: "/admin/invoices",
+      color: "bg-[#71C168]/10 text-[#71C168]",
+      disabled: false,
     },
   ];
 
