@@ -1,22 +1,26 @@
 services:
-  # db:
-  #   image: postgres:18.4-alpine3.24
-  #   container_name: CF26_db
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: ${DB_USER}
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
-  #     POSTGRES_DB: ${DB_NAME}
-  #   volumes:
-  #     - pg_data:/var/lib/postgresql/data
-  #   networks:
-  #     - CF26_net
+  db:
+    image: postgres:18.6-alpine3.24
+    container_name: CF26_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-kultiflow}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password123}
+      POSTGRES_DB: ${DB_NAME:-kultiflow_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql
+    networks:
+      - CF26_net
 
   server:
     build:
       context: ./server
     container_name: CF26_server
     restart: unless-stopped
+    depends_on:
+      - db
     ports:
       - "8000:8000"
     environment:
@@ -25,6 +29,7 @@ services:
       - NEGO_SERVICE_URL=http://nego:8003
       - ANOMALY_SERVICE_URL=http://anomaly:8004
       - SALES_SERVICE_URL=http://sales-demand:8005
+      - DATABASE_URL=postgresql+asyncpg://${DB_USER:-kultiflow}:${DB_PASSWORD:-password123}@db:5432/${DB_NAME:-kultiflow_db}
     networks:
       - CF26_net
 

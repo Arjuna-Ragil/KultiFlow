@@ -20,14 +20,12 @@ export default function LandingPage() {
             >
               Login as Admin
             </Link>
-            <button
-              disabled
-              aria-disabled="true"
-              className="px-5 py-2.5 rounded-lg bg-[#86CA7F] text-white text-sm font-semibold cursor-not-allowed opacity-85 shadow-xs flex items-center gap-1.5"
-              title="Customer Login temporarily disabled"
+            <Link
+              href="/customer/dashboard"
+              className="px-5 py-2.5 rounded-lg bg-[#71C168] hover:bg-[#60ab58] text-white text-sm font-semibold transition-colors shadow-xs"
             >
               Login as Customer
-            </button>
+            </Link>
           </div>
         </div>
       </header>
@@ -73,12 +71,12 @@ export default function LandingPage() {
               </p>
 
               <div className="pt-2">
-                <button
-                  onClick={() => alert("Catalog exploring is available in Admin QC mode.")}
-                  className="px-8 py-3.5 rounded-lg bg-[#86CA7F] hover:bg-[#74BA6C] text-white font-bold text-base shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+                <Link
+                  href="/customer/dashboard"
+                  className="inline-flex items-center justify-center px-8 py-3.5 rounded-lg bg-[#71C168] hover:bg-[#60ab58] text-white font-bold text-base shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5"
                 >
                   Explore Catalog
-                </button>
+                </Link>
               </div>
             </div>
 

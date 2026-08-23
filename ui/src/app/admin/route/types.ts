@@ -5,6 +5,7 @@ export type Destination = {
   lon: string
   urgency: "low" | "normal" | "high"
   demand: string
+  invoiceId?: string
 }
 
 export type FormState = {

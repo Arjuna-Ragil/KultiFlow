@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import type { BoundingBox, QCScanHistory, RecentDetection } from "../components/types";
 
+const ZOOM_FACTOR = 0.5; // ambil 50% bagian tengah video sebelum di-crop ke 224x224 (setara zoom 2x)
+
 export function useQCLogic() {
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [selectedFruit, setSelectedFruit] = useState("Apple (Gala)");
+  const [selectedFruit, setSelectedFruit] = useState("General Produce");
 
   const [batchScannedCount, setBatchScannedCount] = useState(0);
   const [batchPassCount, setBatchPassCount] = useState(0);
@@ -15,6 +17,7 @@ export function useQCLogic() {
   const [currentResult, setCurrentResult] = useState<{ label: string; confidence: number } | null>(null);
   const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([]);
   const [recentDetections, setRecentDetections] = useState<RecentDetection[]>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const [qcHistory, setQcHistory] = useState<QCScanHistory[]>([]);
 
@@ -81,9 +84,30 @@ export function useQCLogic() {
         const context = canvas.getContext("2d");
 
         if (context) {
-          canvas.width = video.videoWidth || 640;
-          canvas.height = video.videoHeight || 480;
-          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const videoWidth = video.videoWidth || 640;
+          const videoHeight = video.videoHeight || 480;
+
+          // Determine the shortest side, then zoom in to a smaller center region
+          const cropSize = Math.min(videoWidth, videoHeight) * ZOOM_FACTOR;
+
+          // Calculate center coordinates for cropping
+          const startX = (videoWidth - cropSize) / 2;
+          const startY = (videoHeight - cropSize) / 2;
+
+          // Target ML model dimensions to save bandwidth
+          const targetSize = 224;
+          canvas.width = targetSize;
+          canvas.height = targetSize;
+
+          // Crop from center and scale down to 224x224 directly on the canvas
+          context.drawImage(
+            video,
+            startX, startY, cropSize, cropSize, // Source crop
+            0, 0, targetSize, targetSize        // Destination (scaled to 224x224)
+          );
+
+          // Simpan hasil crop buat ditampilin di live preview panel
+          setPreviewImage(canvas.toDataURL("image/jpeg", 0.8));
 
           try {
             const blob = await new Promise<Blob | null>((resolve) =>
@@ -102,6 +126,8 @@ export function useQCLogic() {
 
               if (response.ok) {
                 const data = await response.json();
+                console.log("QC API Response:", data); // Debugging log for detection output
+
                 if (data.label && data.label.toLowerCase() !== "none") {
                   isFreshResult = data.label.toLowerCase() === "fresh";
                   confidenceScore = Math.round((data.confidence || 0.9) * 100);
@@ -113,7 +139,7 @@ export function useQCLogic() {
 
                   updateDetections(isFreshResult ? "Fresh" : "Defect", confidenceScore, selectedFruit);
                 } else if (data.label && data.label.toLowerCase() === "none") {
-                  setCurrentResult(null);
+                  setCurrentResult({ label: "None", confidence: 0 });
                 }
               } else {
                 console.error("Server returned an error", response.status);
@@ -128,7 +154,7 @@ export function useQCLogic() {
           }
         }
       }
-    }, 1800);
+    }, 4000);
   };
 
   const updateDetections = (
@@ -254,11 +280,23 @@ export function useQCLogic() {
         `Batch ${scanId} finished: ${totalItems} items scanned (${passItems} Fresh, ${defectItems} Reject).`,
         isOverallFresh ? "success" : "warning"
       );
+
+      const payload = {
+        fruit_type: fruitType + (fruitSubtype ? " " + fruitSubtype : ""),
+        pass_rate: (passRate / 100).toFixed(2),
+      };
+
+      fetch("http://localhost:8000/api/inspection/save-batch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).catch(err => console.error("Failed to save QC batch result", err));
     }
 
     setIsScanning(false);
     setIsCameraActive(false);
     setCurrentResult(null);
+    setPreviewImage(null);
   };
 
   const livePassRate =
@@ -283,5 +321,6 @@ export function useQCLogic() {
     canvasRef,
     startBatchScan,
     stopBatchScan,
+    previewImage,
   };
 }

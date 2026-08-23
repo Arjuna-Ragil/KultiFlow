@@ -9,32 +9,7 @@ interface AdminShellProps {
 }
 
 export function AdminShell({ children }: AdminShellProps) {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    {
-      id: "1",
-      title: "Automated QC Complete",
-      message: "Batch #4029 fruit quality inspection passed at 92% rate.",
-      time: "5m ago",
-      read: false,
-      type: "success",
-    },
-    {
-      id: "2",
-      title: "Route Optimized",
-      message: "Fleet routes for 2 delivery vehicles generated successfully.",
-      time: "24m ago",
-      read: false,
-      type: "info",
-    },
-    {
-      id: "3",
-      title: "System Update",
-      message: "AI vision model updated with latest produce grading weights.",
-      time: "2h ago",
-      read: true,
-      type: "info",
-    },
-  ]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   const unreadCount = notifications.filter((item) => !item.read).length;

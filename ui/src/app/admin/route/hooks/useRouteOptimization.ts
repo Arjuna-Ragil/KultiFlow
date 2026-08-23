@@ -2,12 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import type { FormState, ValidationError, Destination } from "../types";
 
 const sampleInitialState: FormState = {
-  vehicleCount: 2,
-  capacities: ["100", "100"],
-  destinations: [
-    { id: "d1", name: "Warehouse", lat: "-6.200000", lon: "106.816666", urgency: "normal", demand: "0" },
-    { id: "d2", name: "Client A", lat: "-6.21", lon: "106.82", urgency: "high", demand: "30" },
-  ],
+  vehicleCount: 1,
+  capacities: ["100"],
+  destinations: [],
 }
 
 const defaultNewDestination = (id: string): Destination => ({ id, name: "", lat: "", lon: "", urgency: "normal", demand: "0" })
@@ -22,6 +19,26 @@ export function useRouteOptimization() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<any | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  
+  const [invoices, setInvoices] = useState<any[]>([])
+  const [warehouses, setWarehouses] = useState<any[]>([])
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState<number | "">("")
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/anomaly/invoices")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setInvoices(data)
+      })
+      .catch(err => console.error("Failed to fetch invoices", err))
+      
+    fetch("http://localhost:8000/api/warehouse")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setWarehouses(data)
+      })
+      .catch(err => console.error("Failed to fetch warehouses", err))
+  }, [])
 
   useEffect(() => {
     setForm((cur) => {
@@ -69,6 +86,44 @@ export function useRouteOptimization() {
     setForm((cur) => ({ ...cur, destinations: [...cur.destinations, defaultNewDestination(uid("d"))] }))
   }
 
+  const handleAddDestinationFromInvoice = (invoiceId: string) => {
+    const invoice = invoices.find(inv => inv.id === invoiceId)
+    if (!invoice) return
+
+    // Calculate total weight from items if totalWeightKg isn't directly available or reliable
+    let totalDemand = 0
+    if (invoice.items && Array.isArray(invoice.items)) {
+      totalDemand = invoice.items.reduce((sum: number, item: any) => sum + (item.quantity || item.qtyKg || 1), 0)
+    }
+
+    // Default to random offset around Jakarta if coordinates are missing
+    const lat = invoice.latitude !== null && invoice.latitude !== undefined 
+      ? String(invoice.latitude) 
+      : String(-6.2 + (Math.random() * 0.1 - 0.05))
+      
+    const lon = invoice.longitude !== null && invoice.longitude !== undefined 
+      ? String(invoice.longitude) 
+      : String(106.8 + (Math.random() * 0.1 - 0.05))
+
+    const newDest: Destination = {
+      id: uid("d"),
+      name: `${invoice.companyName || "Unknown"} (${invoice.orderNumber})`,
+      lat,
+      lon,
+      urgency: "normal",
+      demand: String(totalDemand),
+      invoiceId: invoice.id
+    }
+
+    setForm((cur) => {
+      // Check if this invoice is already added
+      if (cur.destinations.some(d => d.invoiceId === invoice.id)) {
+        return cur;
+      }
+      return { ...cur, destinations: [...cur.destinations, newDest] }
+    })
+  }
+
   const handleRemoveDestination = (id: string) => {
     setForm((cur) => ({ ...cur, destinations: cur.destinations.filter((d) => d.id !== id) }))
   }
@@ -82,10 +137,20 @@ export function useRouteOptimization() {
 
   const toPayload = (state: FormState) => {
     const urgencyMap: Record<string, number> = { low: 0.3, normal: 0.5, high: 0.8 }
+    
+    let allDestinations = [...state.destinations];
+    const wh = warehouses.find(w => w.id === selectedWarehouseId);
+    if (wh) {
+      allDestinations = [
+        { id: `wh-${wh.id}`, name: wh.name, lat: String(wh.latitude || 0), lon: String(wh.longitude || 0), urgency: "normal", demand: "0" },
+        ...allDestinations
+      ];
+    }
+    
     return {
       num_vehicles: state.vehicleCount,
       vehicle_capacities: state.capacities.map((c) => Number(c)),
-      destinations: state.destinations.map((d) => ({
+      destinations: allDestinations.map((d) => ({
         nama: d.name,
         lat: Number(d.lat),
         lon: Number(d.lon),
@@ -133,7 +198,12 @@ export function useRouteOptimization() {
     setResults,
     errorMsg,
     totalDemand,
+    invoices,
+    warehouses,
+    selectedWarehouseId,
+    setSelectedWarehouseId,
     handleAddDestination,
+    handleAddDestinationFromInvoice,
     handleRemoveDestination,
     handleReset,
     handleSubmit,

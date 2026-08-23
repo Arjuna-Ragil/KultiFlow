@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FileText, LayoutDashboard, Route, Scan, TrendingUp, Leaf, LogOut, ShoppingBag } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-type NavItem = "dashboard" | "qc" | "route" | "catalog" | "forecasting" | "invoices";
+type NavItem = "dashboard" | "qc" | "route" | "catalog" | "forecasting" | "invoices" | "warehouse";
 
 interface AdminSidebarProps {
   activePath?: string;
@@ -20,7 +20,13 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
       ? "route"
       : currentPath.includes("/forecasting")
         ? "forecasting"
-        : "dashboard";
+        : currentPath.includes("/invoices")
+          ? "invoices"
+          : currentPath.includes("/catalog")
+            ? "catalog"
+            : currentPath.includes("/warehouse")
+              ? "warehouse"
+              : "dashboard";
 
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col justify-between border-r border-gray-200 bg-white">
@@ -87,6 +93,18 @@ export function AdminSidebar({ activePath }: AdminSidebarProps) {
           >
             <FileText className="h-5 w-5" />
             <span>Invoices</span>
+          </Link>
+
+          <Link
+            href="/admin/warehouse"
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all ${
+              activeItem === "warehouse"
+                ? "border-l-4 border-[#71C168] bg-[#71C168]/10 font-bold text-[#71C168]"
+                : "text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            <Route className="h-5 w-5" />
+            <span>Warehouses</span>
           </Link>
 
           <Link

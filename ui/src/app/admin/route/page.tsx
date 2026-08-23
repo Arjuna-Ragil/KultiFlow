@@ -13,7 +13,12 @@ export default function Page() {
     results,
     errorMsg,
     totalDemand,
+    invoices,
+    warehouses,
+    selectedWarehouseId,
+    setSelectedWarehouseId,
     handleAddDestination,
+    handleAddDestinationFromInvoice,
     handleRemoveDestination,
     handleReset,
     handleSubmit,
@@ -39,7 +44,12 @@ export default function Page() {
             loading={loading}
             errorMsg={errorMsg}
             totalDemand={totalDemand}
+            invoices={invoices}
+            warehouses={warehouses}
+            selectedWarehouseId={selectedWarehouseId}
+            setSelectedWarehouseId={setSelectedWarehouseId}
             handleAddDestination={handleAddDestination}
+            handleAddDestinationFromInvoice={handleAddDestinationFromInvoice}
             handleRemoveDestination={handleRemoveDestination}
             handleReset={handleReset}
             handleSubmit={handleSubmit}

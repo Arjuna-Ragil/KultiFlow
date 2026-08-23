@@ -38,7 +38,6 @@ export function RecentScansTable({ qcHistory }: RecentScansTableProps) {
               <tr>
                 <th className="px-6 py-3.5">Scan ID</th>
                 <th className="px-6 py-3.5">Timestamp</th>
-                <th className="px-6 py-3.5">Fruit Type</th>
                 <th className="px-6 py-3.5">AI Result</th>
                 <th className="px-6 py-3.5 text-center">Action</th>
               </tr>
@@ -48,18 +47,6 @@ export function RecentScansTable({ qcHistory }: RecentScansTableProps) {
                 <tr key={row.id} className="transition-colors hover:bg-gray-50/80">
                   <td className="px-6 py-4 font-mono font-bold text-[#1F2937]">{row.id}</td>
                   <td className="px-6 py-4 text-gray-500">{row.timestamp}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={row.thumbnailUrl}
-                        alt={row.fruitType}
-                        className="h-8 w-8 rounded-lg border border-gray-200 object-cover"
-                      />
-                      <span className="font-semibold text-[#1F2937]">
-                        {row.fruitType} ({row.fruitSubtype})
-                      </span>
-                    </div>
-                  </td>
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
