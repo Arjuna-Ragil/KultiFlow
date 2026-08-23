@@ -208,7 +208,7 @@ export default function ForecastingPage() {
                 {/* Price */}
                 <div>
                   <label className="mb-1.5 block text-xs font-bold text-gray-700">
-                    Expected Selling Price (Rp / kg)
+                    Expected Selling Price (Rp / unit)
                   </label>
                   <div className="relative">
                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">
@@ -338,7 +338,7 @@ export default function ForecastingPage() {
                       <span className="text-6xl font-black tracking-tight">
                         {predictedDemand?.toLocaleString("id-ID")}
                       </span>
-                      <span className="text-xl font-bold text-gray-600">kg / units</span>
+                      <span className="text-xl font-bold text-gray-600">units</span>
                     </div>
                   </div>
                 )}
@@ -362,7 +362,7 @@ export default function ForecastingPage() {
                     <span>Recommended Stock (+10%)</span>
                   </div>
                   <p className="text-lg font-black text-gray-800">
-                    {safetyStock.toLocaleString("id-ID")} kg
+                    {safetyStock.toLocaleString("id-ID")} units
                   </p>
                 </div>
               </div>

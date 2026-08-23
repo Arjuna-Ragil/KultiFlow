@@ -496,7 +496,7 @@ function OrderFormContent() {
                 <thead>
                   <tr className="border-b border-gray-100 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-400">
                     <th className="pb-2.5 pl-1">PRODUCT</th>
-                    <th className="pb-2.5 text-center">QTY (KG)</th>
+                    <th className="pb-2.5 text-center">QTY (UNITS)</th>
                     <th className="pb-2.5 text-right">UNIT PRICE</th>
                     <th className="pb-2.5 text-right">SUBTOTAL</th>
                     <th className="pb-2.5 text-right pr-1 w-8"></th>
@@ -652,8 +652,8 @@ function OrderFormContent() {
             {/* Calculations Breakdown */}
             <div className="space-y-2.5 text-xs sm:text-sm text-gray-300">
               <div className="flex justify-between items-center">
-                <span>Total Weight</span>
-                <span className="font-semibold text-white">{totalWeightKg.toLocaleString("id-ID")} kg</span>
+                <span>Total Units</span>
+                <span className="font-semibold text-white">{totalWeightKg.toLocaleString("id-ID")} units</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Untaxed Amount</span>

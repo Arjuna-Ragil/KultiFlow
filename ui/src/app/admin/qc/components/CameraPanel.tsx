@@ -75,18 +75,6 @@ export function CameraPanel({
         <div className="text-sm font-medium text-gray-600">
           {cameraError ? "Camera fallback mode enabled" : "Live inspection stream"}
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-xs">
-          <span className="text-xs font-bold uppercase text-gray-500">Target:</span>
-          <select
-            value={selectedFruit}
-            onChange={(event) => onFruitChange(event.target.value)}
-            className="cursor-pointer bg-transparent text-sm font-bold text-[#1F2937] focus:outline-none"
-          >
-            <option value="Apple (Gala)">Apple (Gala)</option>
-            <option value="Banana (Cavendish)">Banana (Cavendish)</option>
-            <option value="Orange (Valencia)">Orange (Valencia)</option>
-          </select>
-        </div>
       </div>
 
       <div className="relative flex aspect-16/10 w-full items-center justify-center overflow-hidden bg-[#1F2937] group">

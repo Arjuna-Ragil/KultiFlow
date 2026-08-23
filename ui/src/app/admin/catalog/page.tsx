@@ -134,7 +134,7 @@ export default function AdminCatalogPage() {
             </div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="text-2xl font-black text-[#1F2937]">{totalStockKg.toLocaleString()}</span>
-              <span className="text-xs text-gray-500">kg available</span>
+              <span className="text-xs text-gray-500">units available</span>
             </div>
           </div>
 
@@ -283,7 +283,7 @@ export default function AdminCatalogPage() {
                   </div>
                   <div className="text-right">
                     <span className="text-[11px] text-gray-400">Stock</span>
-                    <p className="text-xs font-bold text-gray-700">{item.stockKg} kg</p>
+                    <p className="text-xs font-bold text-gray-700">{item.stockKg} units</p>
                   </div>
                 </div>
               </div>
@@ -366,7 +366,7 @@ export default function AdminCatalogPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-gray-600">Price / Kg (Rp)</label>
+                    <label className="text-xs font-bold text-gray-600">Price / Unit (Rp)</label>
                     <input
                       type="number"
                       required
@@ -377,7 +377,7 @@ export default function AdminCatalogPage() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-gray-600">Initial Stock (Kg)</label>
+                    <label className="text-xs font-bold text-gray-600">Initial Stock (Units)</label>
                     <input
                       type="number"
                       required

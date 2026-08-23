@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
         {
           session_id,
           pesan_untuk_pembeli: session.isDeal
-            ? `Negotiation for ${session.productName} is agreed at Rp ${session.lastOfferedPrice.toLocaleString("id-ID")}/kg. You can directly add it to your shopping cart!`
+            ? `Negotiation for ${session.productName} is agreed at Rp ${session.lastOfferedPrice.toLocaleString("id-ID")}/unit. You can directly add it to your shopping cart!`
             : "Negotiation session has concluded. Please start a new session to negotiate again.",
           harga_terakhir: session.lastOfferedPrice,
           deal: session.isDeal,
@@ -217,7 +217,7 @@ Buyer message: "${user_message}"
           offeredPrice = userOffer;
           aiMessage = `Great offer! We agree to lock the price at Rp ${userOffer.toLocaleString(
             "id-ID"
-          )}/kg for ${session.productName} (Grade A+ quality). The batch is ready for shipment from our cold-storage facility.`;
+          )}/unit for ${session.productName} (Grade A+ quality). The batch is ready for shipment from our cold-storage facility.`;
         } else {
           // Below floor price
           const counterStep = Math.round(
@@ -228,15 +228,15 @@ Buyer message: "${user_message}"
           if (turnsRemaining <= 0) {
             aiMessage = `Thank you for your offer. Unfortunately, Rp ${userOffer.toLocaleString(
               "id-ID"
-            )}/kg does not cover our AI QC and cold-chain logistics standards. Our best final price is Rp ${offeredPrice.toLocaleString(
+            )}/unit does not cover our AI QC and cold-chain logistics standards. Our best final price is Rp ${offeredPrice.toLocaleString(
               "id-ID"
-            )}/kg.`;
+            )}/unit.`;
           } else {
             aiMessage = `An offer of Rp ${userOffer.toLocaleString(
               "id-ID"
-            )}/kg is below our operating threshold for Grade A produce. How about a special counter-offer of Rp ${offeredPrice.toLocaleString(
+            )}/unit is below our operating threshold for Grade A produce. How about a special counter-offer of Rp ${offeredPrice.toLocaleString(
               "id-ID"
-            )}/kg? You have ${turnsRemaining} negotiation turns remaining.`;
+            )}/unit? You have ${turnsRemaining} negotiation turns remaining.`;
           }
         }
       } else {
@@ -245,13 +245,13 @@ Buyer message: "${user_message}"
           user_message.toLowerCase().includes("apple") ||
           user_message.toLowerCase().includes("fuji")
         ) {
-          aiMessage = `We have fresh Premium Fuji Apples (Grade A+, 98% QC Pass) at a catalog price of Rp 45,000/kg. You can make a bulk offer directly!`;
+          aiMessage = `We have fresh Premium Fuji Apples (Grade A+, 98% QC Pass) at a catalog price of Rp 45,000/unit. You can make a bulk offer directly!`;
           offeredPrice = 45000;
         } else if (
           user_message.toLowerCase().includes("granny") ||
           user_message.toLowerCase().includes("smith")
         ) {
-          aiMessage = `Our fresh Granny Smith Apples are listed at Rp 52,000/kg. Crisp tartness with automated QC certification. Feel free to propose your bulk price!`;
+          aiMessage = `Our fresh Granny Smith Apples are listed at Rp 52,000/unit. Crisp tartness with automated QC certification. Feel free to propose your bulk price!`;
           offeredPrice = 52000;
         } else {
           aiMessage = `Hello! I'm AgroBot, your KultiFlow negotiation assistant. You can negotiate prices for fresh produce batches like Fuji Apples and Granny Smith. What price would you like to propose?`;

@@ -68,7 +68,7 @@ export function QCPageContent() {
             <div className="flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-xs lg:col-span-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                  TOTAL SCANS (TODAY)
+                  TOTAL BATCH (TODAY)
                 </span>
                 <div className="mt-2 text-4xl font-black text-[#1F2937]">{qcHistory.length}</div>
               </div>

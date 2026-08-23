@@ -439,9 +439,9 @@ export default function InvoicesPage() {
                   <thead className="bg-gray-50/80 font-semibold text-gray-600 border-b border-gray-100">
                     <tr>
                       <th className="py-3 px-4 font-bold text-gray-600">Item Description</th>
-                      <th className="py-3 px-4 text-center font-bold text-gray-600">Qty (kg)</th>
-                      <th className="py-3 px-4 text-right font-bold text-gray-600">Price/kg</th>
-                      <th className="py-3 px-4 text-right font-bold text-gray-600">Total</th>
+                      <th className="py-3 px-4 text-center font-bold text-gray-600">QTY (UNITS)</th>
+                      <th className="py-3 px-4 text-right font-bold text-gray-600">UNIT PRICE</th>
+                      <th className="py-3 px-4 text-right font-bold text-gray-600">TOTAL</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">

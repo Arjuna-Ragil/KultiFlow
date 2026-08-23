@@ -237,7 +237,7 @@ export default function AINegotiatorPage() {
                             <p className="text-sm font-bold text-[#1F2937]">
                               {msg.dealInfo.productName} •{" "}
                               <span className="text-[#1E7B34]">
-                                Rp {msg.dealInfo.price.toLocaleString("id-ID")}/kg
+                                Rp {msg.dealInfo.price.toLocaleString("id-ID")}/unit
                               </span>
                             </p>
                           </div>

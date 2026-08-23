@@ -44,32 +44,13 @@ export function RecentDetectionsCard({ recentDetections }: RecentDetectionsCardP
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-sm font-bold text-[#1F2937]">{item.name}</span>
+                  <span className="text-sm font-bold text-[#1F2937]">{item.status}</span>
                   <span className="font-mono text-xs text-gray-400">{item.code}</span>
                 </div>
               </div>
 
-              <div className="flex flex-col items-end">
-                <span
-                  className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                    item.status === "Fresh"
-                      ? "bg-[#71C168]/20 text-[#71C168]"
-                      : "bg-[#DC2626]/20 text-[#DC2626]"
-                  }`}
-                >
-                  {item.status === "Fresh" ? (
-                    <>
-                      <CheckCircle2 className="h-3 w-3 shrink-0" />
-                      Fresh
-                    </>
-                  ) : (
-                    <>
-                      <Info className="h-3 w-3 shrink-0" />
-                      Defect
-                    </>
-                  )}
-                </span>
-                <span className="mt-0.5 text-[11px] text-gray-400">
+              <div className="flex items-center justify-end">
+                <span className="text-xs font-bold text-gray-400">
                   {item.confidence}% Conf.
                 </span>
               </div>

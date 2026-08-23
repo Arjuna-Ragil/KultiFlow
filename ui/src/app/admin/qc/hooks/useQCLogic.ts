@@ -8,7 +8,7 @@ export function useQCLogic() {
   const [isScanning, setIsScanning] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [selectedFruit, setSelectedFruit] = useState("Apple (Gala)");
+  const [selectedFruit, setSelectedFruit] = useState("General Produce");
 
   const [batchScannedCount, setBatchScannedCount] = useState(0);
   const [batchPassCount, setBatchPassCount] = useState(0);
