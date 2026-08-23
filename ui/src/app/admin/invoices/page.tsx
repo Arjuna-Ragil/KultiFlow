@@ -11,6 +11,7 @@ import {
   Clock,
   CheckCircle
 } from "lucide-react";
+import { UNIFIED_PRODUCTS, ProductItem } from "@/lib/products";
 
 export type InvoiceStage = "quotation" | "sent" | "order" | "completed";
 
@@ -27,7 +28,7 @@ interface InvoiceData {
   issueDate: string;
   dueDate: string;
   stage: InvoiceStage;
-  status: "Draft" | "Pending" | "Paid" | "Sent";
+  status: "Draft" | "Pending" | "Paid" | "Sent" | "Cancelled";
   customer: {
     name: string;
     address: string;
@@ -192,13 +193,16 @@ export default function InvoicesPage() {
             email: "admin@kultiflow.co.id",
           },
           shippingFee: order.shippingFee || 1200000,
-          items: order.items.map((item: any) => ({
-            id: item.id || `item-${Math.random()}`,
-            name: item.name,
-            qtyKg: item.quantity || item.qtyKg || 1, // Fallback for diff payload structures
-            pricePerKg: item.price || item.pricePerKg || 0,
-            image: item.image || "",
-          })),
+          items: order.items.map((item: any) => {
+            const catalogMatch = UNIFIED_PRODUCTS.find((p: ProductItem) => p.name.toLowerCase() === item.name.toLowerCase());
+            return {
+              id: item.id || `item-${Math.random()}`,
+              name: item.name,
+              qtyKg: item.quantity || item.qtyKg || 1, // Fallback for diff payload structures
+              pricePerKg: item.price || item.pricePerKg || 0,
+              image: item.image || catalogMatch?.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop",
+            };
+          }),
         }));
 
         setInvoices((prev) => {
@@ -255,6 +259,15 @@ export default function InvoicesPage() {
     setIsEditModalOpen(false);
   };
 
+  const handleCancelInvoice = () => {
+    const updated = [...invoices];
+    updated[selectedInvoiceIndex] = {
+      ...currentInvoice,
+      status: "Cancelled",
+    };
+    setInvoices(updated);
+  };
+
   const handleSendInvoice = () => {
     handleStageChange("sent");
     setIsSendSuccessModalOpen(true);
@@ -297,6 +310,14 @@ export default function InvoicesPage() {
             >
               <Edit className="h-4 w-4 text-gray-500" />
               <span>Edit Invoice</span>
+            </button>
+
+            <button
+              onClick={handleCancelInvoice}
+              className="inline-flex items-center gap-2 rounded-xl border border-red-300 bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-red-600 shadow-2xs hover:bg-red-50 transition-colors cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+              <span>Cancel Invoice</span>
             </button>
 
             <button
@@ -362,7 +383,9 @@ export default function InvoicesPage() {
                       ? "bg-emerald-100 text-emerald-800"
                       : currentInvoice.status === "Sent"
                         ? "bg-blue-100 text-blue-800"
-                        : "bg-amber-100 text-amber-800"
+                        : currentInvoice.status === "Cancelled"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-amber-100 text-amber-800"
                   }`}
                 >
                   {currentInvoice.status.toUpperCase()}
@@ -450,7 +473,7 @@ export default function InvoicesPage() {
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <img
-                              src={item.image}
+                              src={item.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop"}
                               alt={item.name}
                               className="h-10 w-10 rounded-lg object-cover border border-gray-200"
                               onError={(e) => {

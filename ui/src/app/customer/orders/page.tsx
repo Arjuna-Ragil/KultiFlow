@@ -13,6 +13,7 @@ import {
   Download,
 } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { UNIFIED_PRODUCTS, ProductItem } from "@/lib/products";
 
 type OrderStatus = "Processing" | "Delivered" | "In Transit" | "Cancelled";
 
@@ -103,9 +104,10 @@ const initialOrders: CustomerOrder[] = [
 ];
 
 export default function CustomerOrdersPage() {
-  const [activeTab, setActiveTab] = useState<"All Orders" | "Active" | "Completed" | "Cancelled">("All Orders");
+  const [activeTab, setActiveTab] = useState<"All Orders" | "Processing" | "Delivered" | "Cancelled">("All Orders");
   const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
   const [dynamicOrders, setDynamicOrders] = useState<CustomerOrder[]>([]);
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, OrderStatus>>({});
   const { showToast, addToCart } = useCart();
 
   useEffect(() => {
@@ -114,7 +116,31 @@ export default function CustomerOrdersPage() {
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data)) {
-            setDynamicOrders(data);
+            // Strictly deduplicate by orderNumber, ignoring trailing spaces
+            // This fixes the backend bug where it might return multiple items with the same '#ORD-4035'
+            const seenOrderNumbers = new Set();
+            const uniqueData = data.filter((item: any) => {
+              const key = typeof item.orderNumber === 'string' ? item.orderNumber.trim() : item.orderNumber;
+              if (!key) return true;
+              if (seenOrderNumbers.has(key)) return false;
+              seenOrderNumbers.add(key);
+              return true;
+            });
+
+            const enriched = uniqueData.map((order: any, idx: number) => ({
+              ...order,
+              id: `dyn-${order.id || Math.random()}-${idx}`,
+              status: (order.status === "Pending" ? "Processing" : order.status) || "Processing",
+              items: order.items?.map((item: any, i: number) => {
+                const catalogMatch = UNIFIED_PRODUCTS.find((p: ProductItem) => p.name.toLowerCase() === item.name.toLowerCase());
+                return {
+                  ...item,
+                  id: item.id || `dyn-item-${i}`,
+                  image: item.image || catalogMatch?.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop"
+                };
+              }) || []
+            }));
+            setDynamicOrders(enriched);
           }
         })
         .catch((err) => {
@@ -124,24 +150,42 @@ export default function CustomerOrdersPage() {
   }, []);
 
   const allOrders = useMemo(() => {
-    return [...dynamicOrders, ...initialOrders];
-  }, [dynamicOrders]);
+    const combined = [...dynamicOrders, ...initialOrders];
+    const seenIds = new Set();
+    const finalOrders = [];
+    
+    for (const order of combined) {
+      if (seenIds.has(order.id)) continue;
+      seenIds.add(order.id);
+      finalOrders.push({
+        ...order,
+        status: statusOverrides[order.id] || order.status
+      });
+    }
+    return finalOrders;
+  }, [dynamicOrders, statusOverrides]);
 
-  const tabs: Array<"All Orders" | "Active" | "Completed" | "Cancelled"> = [
+  const handleCancelOrder = (orderId: string) => {
+    setStatusOverrides(prev => ({ ...prev, [orderId]: "Cancelled" }));
+    showToast("Order has been cancelled successfully");
+    setSelectedOrder(prev => prev ? { ...prev, status: "Cancelled" } : null);
+  };
+
+  const tabs: Array<"All Orders" | "Processing" | "Delivered" | "Cancelled"> = [
     "All Orders",
-    "Active",
-    "Completed",
+    "Processing",
+    "Delivered",
     "Cancelled",
   ];
 
   const filteredOrders = useMemo(() => {
     if (activeTab === "All Orders") return allOrders;
-    if (activeTab === "Active") {
+    if (activeTab === "Processing") {
       return allOrders.filter(
         (o) => o.status === "Processing" || o.status === "In Transit"
       );
     }
-    if (activeTab === "Completed") {
+    if (activeTab === "Delivered") {
       return allOrders.filter((o) => o.status === "Delivered");
     }
     if (activeTab === "Cancelled") {
@@ -282,7 +326,7 @@ export default function CustomerOrdersPage() {
                   {order.items.slice(0, 3).map((item, idx) => (
                     <img
                       key={idx}
-                      src={item.image}
+                      src={item.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop"}
                       alt={item.name}
                       title={item.name}
                       className="h-8 w-8 rounded-lg object-cover border border-gray-200 shadow-2xs"
@@ -364,7 +408,7 @@ export default function CustomerOrdersPage() {
                   <div key={idx} className="flex items-center justify-between p-3">
                     <div className="flex items-center gap-3">
                       <img
-                        src={item.image}
+                        src={item.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=200&auto=format&fit=crop"}
                         alt={item.name}
                         className="h-10 w-10 rounded-lg object-cover border border-gray-200"
                       />
@@ -401,6 +445,17 @@ export default function CustomerOrdersPage() {
                 <Plus className="h-3.5 w-3.5" />
                 <span>Reorder Items</span>
               </button>
+
+              {selectedOrder.status !== "Delivered" && selectedOrder.status !== "Cancelled" && (
+                <button
+                  type="button"
+                  onClick={() => handleCancelOrder(selectedOrder.id)}
+                  className="w-full sm:flex-1 py-2.5 px-4 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  <span>Cancel Order</span>
+                </button>
+              )}
 
               <button
                 type="button"
