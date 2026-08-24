@@ -24,7 +24,7 @@ async def check_order(
     for item in payload.items:
         ai_payload = OrderRequest(
             buyer_id="BUY-1000", # Mock buyer id
-            buyer_type="wholesale",
+            buyer_type="reseller",
             fruit_type=item.name,
             quantity=int(item.quantity),
             catalog_price=item.price,
