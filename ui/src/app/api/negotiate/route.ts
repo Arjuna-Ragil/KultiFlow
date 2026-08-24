@@ -71,12 +71,14 @@ export async function POST(req: NextRequest) {
       urgency_score = 0.3,
     } = body;
 
-    // 1. Try forwarding to Python FastAPI backend at http://127.0.0.1:8083/
+    // 1. Try forwarding to Python FastAPI backend
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-      const pyRes = await fetch("http://127.0.0.1:8083/negotiate", {
+      // In Docker, we must use the service name 'nego' instead of 127.0.0.1
+      const pythonNegoUrl = process.env.NEGO_SERVICE_URL || "http://nego:8003/negotiate";
+      const pyRes = await fetch(pythonNegoUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -91,15 +93,15 @@ export async function POST(req: NextRequest) {
         const pyData = await pyRes.json();
         return NextResponse.json(pyData);
       } else {
-        console.warn("Python 8083 backend returned status:", pyRes.status);
+        console.warn("Python 8003 backend returned status:", pyRes.status);
       }
     } catch (err: any) {
-      console.warn("Could not reach Python backend at http://127.0.0.1:8083/negotiate:", err?.message || err);
+      console.warn(`Could not reach Python backend at ${process.env.NEGO_SERVICE_URL || "http://nego:8003/negotiate"}:`, err?.message || err);
       // Fallback to local 8000 if running there
       try {
         const c2 = new AbortController();
         const t2 = setTimeout(() => c2.abort(), 1000);
-        const py8000 = await fetch("http://localhost:8000/negotiate", {
+        const py8000 = await fetch("http://server:8000/negotiate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ session_id, user_message }),
@@ -110,7 +112,7 @@ export async function POST(req: NextRequest) {
           const d8000 = await py8000.json();
           return NextResponse.json(d8000);
         }
-      } catch {}
+      } catch { }
     }
 
     // 2. Native Negotiation Engine matching ai-services/nego
